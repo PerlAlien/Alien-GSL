@@ -217,4 +217,8 @@ sub gsl_version {
 __END__
 __POD__
 
-=head1 Alien::GSL - Easy installation of the GSL library.
+=head1 NAME 
+
+Alien::GSL - Easy installation of the GSL library
+
+=cut
