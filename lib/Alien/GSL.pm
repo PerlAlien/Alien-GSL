@@ -179,7 +179,7 @@ sub gsl_prefix {
 }
 
 sub gsl_libs {
-  my %opts = @_;
+  my %opts = (ref $_[0] eq 'HASH') ? %{ $_[0] } : @_;
   my $call = 'gsl-config --libs';
 
   if ($opts{cblas} == 0) {
