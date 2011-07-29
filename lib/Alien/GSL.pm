@@ -55,7 +55,7 @@ sub have {
   my $gsl_version = qx/ $CMD_GSL_CONFIG_VERSION /;
   if ($?) {
     $gsl_version = 0;
-    carp "Cannot execute 'CMD_GSL_CONFIG_VERSION' or you do not have GSL installed";
+    carp "Cannot execute $CMD_GSL_CONFIG_VERSION or you do not have GSL installed";
   }
 
   return $gsl_version;
@@ -83,6 +83,9 @@ sub install {
   # this function can be used to delegate to individual 
   # OS specific installers once they are created
   # this should test $^O. Be sure to update @SUPPORTED_OSES too!
+
+  # perhaps setting CBLAS env variable should go here? is that OS indep?
+
   if ($^O eq 'linux') {
     goto &install_linux;
   } else {
@@ -99,6 +102,9 @@ sub install_linux {
   }
 
   my $opts = (@_ and ref $_[-1] eq 'HASH') ? pop : {};
+  if (defined $opts->{CBLAS}) {
+    $ENV{GSL_CBLAS_LIB} = $opts->{CBLAS};
+  }
 
   my $version = shift;
   my $file;
@@ -161,6 +167,49 @@ sub install_linux {
 
   return Alien::GSL::have();
 
+}
+
+sub gsl_prefix {
+  my $prefix = qx/ gsl-config --prefix /;
+  if ($?) {
+    warn "Call to gsl-config --prefix failed: $!";
+  }
+
+  return $prefix;
+}
+
+sub gsl_libs {
+  my %opts = @_;
+  my $call = 'gsl-config --libs';
+
+  if ($opts{cblas} == 0) {
+    $call .= '-without-cblas';
+  } 
+
+  my $prefix = qx/ $call /;
+  if ($?) {
+    warn "Call to $call failed: $!";
+  }
+
+  return $prefix;
+}
+
+sub gsl_cflags {
+  my $cflags = qx/ gsl-config --cflags /;
+  if ($?) {
+    warn "Call to gsl-config --cflags failed: $!";
+  }
+
+  return $cflags;
+}
+
+sub gsl_version {
+  my $version = qx/ gsl-config --version /;
+  if ($?) {
+    warn "Call to gsl-config --version failed: $!";
+  }
+
+  return $version;
 }
 
 1;
