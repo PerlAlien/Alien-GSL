@@ -15,6 +15,7 @@ if ($gsl_version == 0) {
   if ($gsl_version) {
     print "GSL version $gsl_version installed!\n";
   } else {
+    # keep a known "successful" fail from causing an actual fail on CPANtesters
     exit 0 if $ENV{AUTOMATED_TESTING};
 
     die <<MESSAGE;
