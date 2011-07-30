@@ -246,6 +246,12 @@ sub install_linux {
 
 =head1 MODULE FUNCTIONS
 
+These functions are basically a functional interface to the C<gsl-config> utility command.
+
+=head2 gsl_prefix
+
+Takes no options, returns the "GSL installation prefix".
+
 =cut
 
 sub gsl_prefix {
@@ -257,11 +263,17 @@ sub gsl_prefix {
   return $prefix;
 }
 
+=head2 gsl_libs( [opts hash or hash reference] )
+
+Takes an optional hash or hash reference, returns "library linking information". A hash key C<CBLAS> or C<cblas>, whose value is false will return the "library linking information, without cblas", though by default the cblas information is included.
+
+=cut
+
 sub gsl_libs {
   my %opts = (ref $_[0] eq 'HASH') ? %{ $_[0] } : @_;
   my $call = 'gsl-config --libs';
 
-  if ($opts{cblas} == 0) {
+  if ($opts{CBLAS} == 0 or $opts{cblas} == 0) {
     $call .= '-without-cblas';
   } 
 
@@ -273,6 +285,12 @@ sub gsl_libs {
   return $prefix;
 }
 
+=head2 gsl_cflags
+
+Takes no options, returns the "pre-processor and compiler flags".
+
+=cut
+
 sub gsl_cflags {
   my $cflags = qx/ gsl-config --cflags /;
   if ($?) {
@@ -282,6 +300,12 @@ sub gsl_cflags {
   return $cflags;
 }
 
+=head2 gsl_version
+
+Takes no options, returns "version information". This function is provided for symmetry, however, for flexibility and error handling the C<have()> function is recommended, especially in pre-install usage.
+
+=cut
+
 sub gsl_version {
   my $version = qx/ gsl-config --version /;
   if ($?) {
@@ -290,6 +314,37 @@ sub gsl_version {
 
   return $version;
 }
+
+=head1 SEE ALSO
+
+=over
+
+=item L<Math::GSL>
+
+=item L<Math::GSLx::ODEIV2>
+
+=item L<GSL|http://www.gnu.org/software/gsl/>
+
+=item L<PDL>, L<website|http://pdl.perl.org> 
+
+=back
+
+=head1 SOURCE REPOSITORY
+
+L<http://github.com/jberger/Alien-GSL>
+
+=head1 AUTHOR
+
+Joel Berger, E<lt>joel.a.berger@gmail.comE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2011 by Joel Berger
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
 
 1;
 
