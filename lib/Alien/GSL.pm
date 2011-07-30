@@ -120,6 +120,8 @@ sub have {
     carp "Cannot execute $CMD_GSL_CONFIG_VERSION or you do not have GSL installed";
   }
 
+  chomp $gsl_version;
+
   return $gsl_version;
 
 }
