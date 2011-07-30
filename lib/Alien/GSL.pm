@@ -12,6 +12,40 @@ use File::Temp ();
 use File::chdir;
 use Archive::Extract;
 
+=head1 NAME 
+
+Alien::GSL - Easy installation of the GSL library
+
+=head1 DESCRIPTION
+
+This module is meant to ease the install of the Gnu Scientific Library (GSL). It also provides version checking and build flags via the gsl-config utility.
+
+=head1 SYNOPSIS
+
+=head1 EXPORTS
+
+Currently this module does not export any functions or variables. Use instead the fully qualified symbol name, i.e. C<Alien::GSL::install()> or C<@Alien::GSL::SUPPORTED_OSES>.
+
+=head1 PACKAGE VARIABLES
+
+=over
+
+=item * 
+
+C<$FTP_ROOT> - specifies the FTP site where the GSL library is available. Note: This variable should end in a trailing slash.
+
+=item *
+
+C<$CMD_GSL_CONFIG_VERSION> - the command that is run to check the version of the installed GSL library. Note that (for now) this variable is only checked in the C<have> and C<required_gsl_version> functions, NOT the C<version> function.
+
+=item *
+
+C<@SUPPORTED_OSES> - lists the OSes on which the C<Alien::GSL> module can install the GSL library. On these OSes the C<install> function will attempt to install the library, using an OS specific subservient function.
+
+=back
+
+=cut
+
 our $FTP_ROOT = 'ftp://ftp.gnu.org/gnu/gsl/';
 our $CMD_GSL_CONFIG_VERSION = 'gsl-config --version';
 
@@ -20,6 +54,16 @@ our $CMD_GSL_CONFIG_VERSION = 'gsl-config --version';
 our @SUPPORTED_OSES = ( qw/ 
   linux
 / );
+
+=head1 INSTALLING FUNCTIONS
+
+=head2 available
+
+Takes no parameters. In list context returns an array of the GSL tarballs available from the FTP folder given in the C<$FTP_ROOT> variable. In scalar context returns only the tarball with the highest version number. 
+
+By default the C<$FTP_ROOT> and this tarball name may be joined to form a full download location. If the user specifies a different C<$FTP_ROOT>, be sure to include a trailing slash.
+
+=cut
 
 sub available {
   my $index = get( $FTP_ROOT );
@@ -48,6 +92,12 @@ sub available {
 
 }
 
+=head2 have
+
+Takes no parameters, returns the installed version of the GSL library or zero if C<gsl-config> cannot be executed on the system.
+
+=cut
+
 sub have {
 
   no warnings 'exec';
@@ -62,9 +112,17 @@ sub have {
 
 }
 
+=head2 require_gsl_version( [$version] );
+
+A wrapper around C<have()> which (optionally) takes a number specifying a minimum GSL version, returns the GSL version if it is greater than or equal to that specified. Returns zero otherwise. May also be called with zero as the version parameter, or no parameter at all, in which case the behavior is the same as C<have()>.
+
+=cut
+
 sub require_gsl_version {
 
   my $required = shift;
+  $required ||= 0;
+
   my $have = Alien::GSL::have();
 
   if ($required == 0) {
@@ -78,6 +136,26 @@ sub require_gsl_version {
   return 0;
 
 }
+
+=head2 install ( [$version,] [$opts_hashref] );
+
+Delegation function which calls the OS specific install function. Those functions may be called directly but as it is not recommended they are not listed in this document.
+
+May take up to two arguments, a parameter which specifies the desired version to install (i.e. C<1.15> or C<1.1.1>) which must correspond exactly to the version number in the filename of the tarball. The final argument may be hash reference with options. Currently the available options are:
+
+=over
+
+=item *
+
+C<CLEANUP> - if set to a true value the temporary folder create will be removed upon the completion of the script. This is the default.
+
+=back
+
+This function returns zero if the build/install fails and the version number (as returned by C<have()>) if the build/install succeeds.
+
+On *nix systems this function can only be run with root permissions. Other operating systems (if supported) may require elevated permissions as well.
+
+=cut
 
 sub install {
   # this function can be used to delegate to individual 
@@ -102,9 +180,6 @@ sub install_linux {
   }
 
   my $opts = (@_ and ref $_[-1] eq 'HASH') ? pop : {};
-  if (defined $opts->{CBLAS}) {
-    $ENV{GSL_CBLAS_LIB} = $opts->{CBLAS};
-  }
 
   my $version = shift;
   my $file;
@@ -169,6 +244,10 @@ sub install_linux {
 
 }
 
+=head1 MODULE FUNCTIONS
+
+=cut
+
 sub gsl_prefix {
   my $prefix = qx/ gsl-config --prefix /;
   if ($?) {
@@ -214,11 +293,4 @@ sub gsl_version {
 
 1;
 
-__END__
-__POD__
 
-=head1 NAME 
-
-Alien::GSL - Easy installation of the GSL library
-
-=cut
