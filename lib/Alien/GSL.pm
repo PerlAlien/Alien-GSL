@@ -22,6 +22,18 @@ This module is meant to ease the install of the Gnu Scientific Library (GSL). It
 
 =head1 SYNOPSIS
 
+ use Alien::GSL;
+
+ unless (Alien::GSL::require_gsl_version('1.15')) {
+   die "This module requires at least GSL 1.15";
+ }
+
+ -- or perhaps --
+
+ unless (Alien::GSL::have()) {
+   Alien::GSL::install() or die "Cannot install GSL";
+ }
+
 =head1 EXPORTS
 
 Currently this module does not export any functions or variables. Use instead the fully qualified symbol name, i.e. C<Alien::GSL::install()> or C<@Alien::GSL::SUPPORTED_OSES>.
