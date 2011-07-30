@@ -28,7 +28,7 @@ MESSAGE
   }
 } else {
   # if GSL was found
-  print "Found GSL version $gsl_version";
+  print "Found GSL version $gsl_version\n";
 }
 
 

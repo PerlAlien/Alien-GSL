@@ -279,7 +279,7 @@ sub gsl_prefix {
 
 =head2 gsl_libs( [opts hash or hash reference] )
 
-Takes an optional hash or hash reference, returns "library linking information". A hash key C<CBLAS> or C<cblas>, whose value is false will return the "library linking information, without cblas", though by default the cblas information is included.
+Takes an optional hash or hash reference, returns "library linking information". A hash key C<cblas>, whose value is false will return the "library linking information, without cblas", though by default the cblas information is included.
 
 =cut
 
@@ -287,7 +287,11 @@ sub gsl_libs {
   my %opts = (ref $_[0] eq 'HASH') ? %{ $_[0] } : @_;
   my $call = 'gsl-config --libs';
 
-  if ($opts{CBLAS} == 0 or $opts{cblas} == 0) {
+  if (! defined $opts{cblas}) {
+    $opts{cblas} = 1;
+  }
+  
+  if ($opts{cblas} == 0) {
     $call .= '-without-cblas';
   } 
 
