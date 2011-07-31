@@ -30,7 +30,7 @@ This module is meant to ease the install of the Gnu Scientific Library (GSL). It
 
  -- or perhaps --
 
- unless (Alien::GSL::have()) {
+ unless (Alien::GSL::have_gsl_version()) {
    Alien::GSL::install() or die "Cannot install GSL";
  }
 
@@ -48,7 +48,7 @@ C<$FTP_ROOT> - specifies the FTP site where the GSL library is available. Note: 
 
 =item *
 
-C<$CMD_GSL_CONFIG_VERSION> - the command that is run to check the version of the installed GSL library. Note that (for now) this variable is only checked in the C<have> and C<required_gsl_version> functions, NOT the C<version> function.
+C<$CMD_GSL_CONFIG_VERSION> - the command that is run to check the version of the installed GSL library. Note that (for now) this variable is only checked in the C<have_gsl_version> and C<required_gsl_version> functions, NOT the C<version> function.
 
 =item *
 
@@ -104,13 +104,13 @@ sub available {
 
 }
 
-=head2 have
+=head2 have_gsl_version
 
 Takes no parameters, returns the installed version of the GSL library or zero if C<gsl-config> cannot be executed on the system.
 
 =cut
 
-sub have {
+sub have_gsl_version {
 
   no warnings 'exec';
 
@@ -128,7 +128,7 @@ sub have {
 
 =head2 require_gsl_version( [$version] );
 
-A wrapper around C<have()> which (optionally) takes a number specifying a minimum GSL version, returns the GSL version if it is greater than or equal to that specified. Returns zero otherwise. May also be called with zero as the version parameter, or no parameter at all, in which case the behavior is the same as C<have()>.
+A wrapper around C<have_gsl_version()> which (optionally) takes a number specifying a minimum GSL version, returns the GSL version if it is greater than or equal to that specified. Returns zero otherwise. May also be called with zero as the version parameter, or no parameter at all, in which case the behavior is the same as C<have_gsl_version()>.
 
 =cut
 
@@ -137,7 +137,7 @@ sub require_gsl_version {
   my $required = shift;
   $required ||= 0;
 
-  my $have = Alien::GSL::have();
+  my $have = Alien::GSL::have_gsl_version();
 
   if ($required == 0) {
     return $have if $have;
@@ -165,7 +165,7 @@ C<CLEANUP> - if set to a true value the temporary folder create will be removed 
 
 =back
 
-This function returns zero if the build/install fails and the version number (as returned by C<have()>) if the build/install succeeds.
+This function returns zero if the build/install fails and the version number (as returned by C<have_gsl_version()>) if the build/install succeeds.
 
 On *nix systems this function can only be run with root permissions. Other operating systems (if supported) may require elevated permissions as well.
 
@@ -254,7 +254,7 @@ sub install_linux {
 
   }
 
-  return Alien::GSL::have();
+  return Alien::GSL::have_gsl_version();
 
 }
 
@@ -320,7 +320,7 @@ sub gsl_cflags {
 
 =head2 gsl_version
 
-Takes no options, returns "version information". This function is provided for symmetry, however, for flexibility and error handling the C<have()> function is recommended, especially in pre-install usage.
+Takes no options, returns "version information". This function is provided for symmetry, however, for flexibility and error handling the C<have_gsl_version()> function is recommended, especially in pre-install usage.
 
 =cut
 

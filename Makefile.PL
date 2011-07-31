@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 use lib 'lib';
 use Alien::GSL;
 
-my $gsl_version = Alien::GSL::have();
+my $gsl_version = Alien::GSL::have_gsl_version();
 if ($gsl_version == 0) {
   # if GSL not found, attempt to install if supported
   $gsl_version = Alien::GSL::install();
