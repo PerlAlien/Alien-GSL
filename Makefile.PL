@@ -20,7 +20,7 @@ if ($gsl_version == 0) {
 GSL could not be installed. This could be due to a few reasons.
 1) Perhaps Alien::GSL does not yet support your operating system (currently supports: @Alien::GSL::SUPPORTED_OSES), in which case you are welcome to contribute at this module's GitHub repository. Until then you may install the GSL libraries (and the gsl-config utility) on your own, which will work too.
 2) Maybe you just need to run the installer as root/administrator (did it tell you this above?). 
-3) Otherwise the build has failed, this is more likely to do GSL or your system/toolchain, however if it is a bug, please mention that too. 
+3) Otherwise the build has failed, this is more likely due to GSL or your system/toolchain, however if it is a bug, please mention that too. 
 MESSAGE
 
   }
