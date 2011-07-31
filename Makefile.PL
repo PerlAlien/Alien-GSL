@@ -7,9 +7,7 @@ use Alien::GSL;
 my $gsl_version = Alien::GSL::have();
 if ($gsl_version == 0) {
   # if GSL not found, attempt to install if supported
-  if (grep {$^O eq $_} @Alien::GSL::SUPPORTED_OSES) {
-    $gsl_version = Alien::GSL::install();
-  }
+  $gsl_version = Alien::GSL::install();
 
   # check if successful
   if ($gsl_version) {
