@@ -38,6 +38,10 @@ This module is meant to ease the install of the Gnu Scientific Library (GSL). It
 
 Currently this module does not export any functions or variables. Use instead the fully qualified symbol name, i.e. C<Alien::GSL::install()> or C<@Alien::GSL::SUPPORTED_OSES>.
 
+=head1 INTERFACE STABILITY
+
+This module is in an alpha state. The author hopes that major functionality will remain. Of particular note is the testability of the installation process. Further at this point only Linux platforms can download, build and install the GSL library. All other platforms will die during configure (C<perl Makefile.PL>) stage if GSL cannot be found. The author hopes to expand any other possible functionality.
+
 =head1 PACKAGE VARIABLES
 
 =over
