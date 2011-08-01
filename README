@@ -1,4 +1,4 @@
-Alien::GSL 0.01
+Alien::GSL 0.02
 ===============
 
 This module is meant to ease the install of the Gnu Scientific Library (GSL). 

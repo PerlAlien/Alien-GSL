@@ -1,5 +1,8 @@
 Revision history for Perl extension Alien::GSL.
 
+0.02  Mon Aug 1
+	- version incremented as upload to PAUSE wasn't complete
+
 0.01  Sun Jul 31
 	- original version; 
 
