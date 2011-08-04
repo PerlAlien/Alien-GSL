@@ -34,7 +34,7 @@ WriteMakefile(
     NAME              => 'Alien::GSL',
     VERSION_FROM      => 'lib/Alien/GSL.pm',
     CONFIGURE_REQUIRES => {
-      'File::Chdir' => 0,
+      'File::chdir' => 0,
       'LWP::Simple' => 0,
       'Archive::Extract' => 0,
     },
