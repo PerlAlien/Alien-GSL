@@ -1,6 +1,8 @@
+Build.PL
+builder/My/Builder.pm
+builder/My/Builder/Linux.pm
 Changes
-Makefile.PL
-MANIFEST
+lib/Alien/GSL.pm
+MANIFEST			This list of files
 README
 t/basic.t
-lib/Alien/GSL.pm

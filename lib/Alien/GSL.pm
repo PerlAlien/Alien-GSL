@@ -7,10 +7,8 @@ our $VERSION = 0.02;
 $VERSION = eval $VERSION;
 
 use Carp;
-use LWP::Simple;
-use File::Temp ();
-use File::chdir;
-use Archive::Extract;
+
+
 
 =head1 NAME 
 
@@ -62,73 +60,13 @@ C<@SUPPORTED_OSES> - lists the OSes on which the C<Alien::GSL> module can instal
 
 =cut
 
-our $FTP_ROOT = 'ftp://ftp.gnu.org/gnu/gsl/';
-our $CMD_GSL_CONFIG_VERSION = 'gsl-config --version';
-
-#once you create a branch in in Alien::GSL::install for a new OS
-#enter that OS indicator (return from $^O) here
-our @SUPPORTED_OSES = ( qw/ 
-  linux
-/ );
-
-=head1 INSTALLING FUNCTIONS
-
-=head2 available
-
-Takes no parameters. In list context returns an array of the GSL tarballs available from the FTP folder given in the C<$FTP_ROOT> variable. In scalar context returns only the tarball with the highest version number. 
-
-By default the C<$FTP_ROOT> and this tarball name may be joined to form a full download location. If the user specifies a different C<$FTP_ROOT>, be sure to include a trailing slash.
-
-=cut
-
-sub available {
-  my $index = get( $FTP_ROOT );
-
-  my @tarballs = ($index =~ /(gsl-[\d\.]+\.tar\.gz)(?!\.sig)/g);
-  @tarballs = 
-    map { $_->[0] }
-    sort { 
-      push @$a, 0 while @$a < 4;
-      push @$b, 0 while @$b < 4;
-      $a->[1] <=> $b->[1] ||
-      $a->[2] <=> $b->[2] ||
-      $a->[3] <=> $b->[3]
-    }
-    map { 
-      my $version = $1 if /-([\d\.]+)\./; 
-      [ $_ , split(/\./, $version) ]
-    }
-    @tarballs;
-
-  if (wantarray) {
-    return @tarballs;
-  } else {
-    return $tarballs[-1];
-  }
-
-}
-
 =head2 have_gsl_version
 
 Takes no parameters, returns the installed version of the GSL library or zero if C<gsl-config> cannot be executed on the system.
 
 =cut
 
-sub have_gsl_version {
 
-  no warnings 'exec';
-
-  my $gsl_version = qx/ $CMD_GSL_CONFIG_VERSION /;
-  if ($?) {
-    $gsl_version = 0;
-    carp "Cannot execute $CMD_GSL_CONFIG_VERSION or you do not have GSL installed";
-  }
-
-  chomp $gsl_version;
-
-  return $gsl_version;
-
-}
 
 =head2 require_gsl_version( [$version] );
 
@@ -189,78 +127,7 @@ sub install {
   }
 }
 
-sub install_linux {
 
-  # check if running as root
-  if ($< != 0) {
-    print "Must call Alien::GSL::install with root permissions\n";
-    return 0;
-  }
-
-  my $opts = (@_ and ref $_[-1] eq 'HASH') ? pop : {};
-
-  my $version = shift;
-  my $file;
-  if (defined $version) {
-    my @available = grep { /gsl-$version\.tar\.gz/ } Alien::GSL::available();
-    if (@available > 1) {
-      croak "Could not uniquely determine desired version. Files which match your specification (from GSL FTP) are: @available\n";
-    } elsif (@available == 0) {
-      croak "Could not find desired version on the GSL FTP ftp server";
-    } else {
-      $file = $available[0];
-    }
-  } else {
-    $file = Alien::GSL::available();
-  }
-
-  my $dir = File::Temp->newdir( CLEANUP => defined $opts->{CLEANUP} ? $opts->{CLEANUP} : 1 );
-  print "Using temporary directory: $dir\n";
-
-  {
-
-    local $CWD = "$dir";
-
-    print "Attempting to download: $FTP_ROOT$file\n";
-    getstore( $FTP_ROOT . $file, $file );
-
-    print "Extracting $file\n";
-    my $ae = Archive::Extract->new( archive => $file );
-    $ae->extract;
-    (my $extract_dir = $file) =~ s/(gsl-[\d\.]+)\.tar\.gz/$1/;
-
-    {
-      local $CWD = $extract_dir;
-
-      print "Configuring GSL\n";
-      system( './configure' );
-      if ($?) {
-        print "Configure Failed!\n";
-        return 0;
-      }
-
-      print "Building GSL\n";
-      system( 'make' );
-      if ($?) {
-        print "Build (make) Failed!\n";
-        return 0;
-      }
-
-      print "Installing GSL\n";
-      system( 'make install' );
-      if ($?) {
-        print "Install (make install) Failed!\n";
-        return 0;
-      }
-    }
-
-    #back in base temporary directory $dir
-
-  }
-
-  return Alien::GSL::have_gsl_version();
-
-}
 
 =head1 MODULE FUNCTIONS
 
