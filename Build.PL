@@ -3,9 +3,14 @@ use warnings;
 
 use lib 'builder';
 
-use My::Builder::Linux;
+my $builder_class = 'My::Builder';
+if ($^O eq 'linux') { 
+  $builder_class .= '::Linux';
+}
 
-my $builder = My::Builder::Linux->new(
+eval "require $builder_class" or die "Could not load $builder_class";
+
+my $builder = $builder_class->new(
   module_name        => 'Alien::GSL',
   dist_version_from  => 'lib/Alien/GSL.pm',
   dist_author        => 'Joel Berger <joel.a.berger@gmail.com>',

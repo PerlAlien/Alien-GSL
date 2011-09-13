@@ -20,8 +20,6 @@ my $CMD_GSL_CONFIG = 'gsl-config';
 sub ACTION_code {
   my $self = shift;
 
-  $self->args('Force', 1);
-
   if ($self->args('Force') or !$self->have_gsl_version) {
     my $tmpdir = File::Temp->newdir();
 
