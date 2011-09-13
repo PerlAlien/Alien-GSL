@@ -27,10 +27,19 @@ sub ACTION_code {
 
     my $dir = $self->fetch({dir => $tmpdir});
 
-    $self->gsl_make_install($dir);
+    my $status = $self->gsl_make_install($dir);
+    print "Build/Install succeeded\n"; 
   }
   
   $self->SUPER::ACTION_code;
+}
+
+sub gsl_make_install {
+  my $self = shift;
+
+  carp "Build/Install of GSL not available on this system";
+
+  return 0;
 }
 
 =head2 available

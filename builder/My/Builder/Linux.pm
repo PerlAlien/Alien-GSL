@@ -5,10 +5,7 @@ use parent 'My::Builder';
 
 use Carp;
 
-use LWP::Simple;
-use File::Temp ();
 use File::chdir;
-use Archive::Extract;
 
 sub gsl_make_install {
   my $self = shift;
