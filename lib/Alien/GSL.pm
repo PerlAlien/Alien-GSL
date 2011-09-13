@@ -3,12 +3,10 @@ package Alien::GSL;
 use strict;
 use warnings;
 
-our $VERSION = 0.02;
+our $VERSION = 0.03;
 $VERSION = eval $VERSION;
 
 use Carp;
-
-
 
 =head1 NAME 
 
@@ -39,34 +37,6 @@ Currently this module does not export any functions or variables. Use instead th
 =head1 INTERFACE STABILITY
 
 This module is in an alpha state. The author hopes that major functionality will remain. Of particular note is the testability of the installation process. Further at this point only Linux platforms can download, build and install the GSL library. All other platforms will die during configure (C<perl Makefile.PL>) stage if GSL cannot be found. The author hopes to expand any other possible functionality.
-
-=head1 PACKAGE VARIABLES
-
-=over
-
-=item * 
-
-C<$FTP_ROOT> - specifies the FTP site where the GSL library is available. Note: This variable should end in a trailing slash.
-
-=item *
-
-C<$CMD_GSL_CONFIG_VERSION> - the command that is run to check the version of the installed GSL library. Note that (for now) this variable is only checked in the C<have_gsl_version> and C<required_gsl_version> functions, NOT the C<version> function.
-
-=item *
-
-C<@SUPPORTED_OSES> - lists the OSes on which the C<Alien::GSL> module can install the GSL library. On these OSes the C<install> function will attempt to install the library, using an OS specific subservient function.
-
-=back
-
-=cut
-
-=head2 have_gsl_version
-
-Takes no parameters, returns the installed version of the GSL library or zero if C<gsl-config> cannot be executed on the system.
-
-=cut
-
-
 
 =head2 require_gsl_version( [$version] );
 
