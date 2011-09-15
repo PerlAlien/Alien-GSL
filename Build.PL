@@ -9,7 +9,7 @@ my $builder_class = 'My::Builder';
 if ( os_is('Unix') ) {
   $builder_class .= '::Unix';
 }
-print "Using build class $build_class\n";
+print "Using build class $builder_class\n";
 
 eval "require $builder_class" or die "Could not load $builder_class";
 
