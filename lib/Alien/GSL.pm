@@ -24,23 +24,39 @@ This module is meant to ease the install of the Gnu Scientific Library (GSL). It
    die "This module requires at least GSL 1.15";
  }
 
- -- or perhaps --
-
- unless (Alien::GSL::have_gsl_version()) {
-   Alien::GSL::install() or die "Cannot install GSL";
- }
-
 =head1 EXPORTS
 
-Currently this module does not export any functions or variables. Use instead the fully qualified symbol name, i.e. C<Alien::GSL::install()> or C<@Alien::GSL::SUPPORTED_OSES>.
+Currently this module does not export any functions or variables. Use instead the fully qualified symbol name, i.e. C<Alien::GSL::gsl_version()>.
 
 =head1 INTERFACE STABILITY
 
-This module is in an alpha state. The author hopes that major functionality will remain. Of particular note is the testability of the installation process. Further at this point only Linux platforms can download, build and install the GSL library. All other platforms will die during configure (C<perl Makefile.PL>) stage if GSL cannot be found. The author hopes to expand any other possible functionality.
+This module is in an alpha state. The author hopes that major functionality will remain. The module now uses L<Module::Build> which allows the install functionality (download, build, install) to be platform specific and separated from the usage functionality described in the L<MODULE FUNCTIONS> section.
+
+=head1 MODULE FUNCTIONS
+
+These functions are basically a functional interface to the C<gsl-config> utility command.
+
+=head2 gsl_version
+
+Takes no options, returns the version number of the installed GSL library.
+
+=cut
+
+sub gsl_version {
+  my $version = qx/ gsl-config --version /;
+
+  chomp($version);
+
+  if ($?) {
+    warn "Call to gsl-config --version failed: $!";
+  }
+
+  return $version;
+}
 
 =head2 require_gsl_version( [$version] );
 
-A wrapper around C<have_gsl_version()> which (optionally) takes a number specifying a minimum GSL version, returns the GSL version if it is greater than or equal to that specified. Returns zero otherwise. May also be called with zero as the version parameter, or no parameter at all, in which case the behavior is the same as C<have_gsl_version()>.
+A wrapper around C<gsl_version()> which (optionally) takes a number specifying a minimum GSL version, returns the GSL version if it is greater than or equal to that specified. Returns zero otherwise. May also be called with zero as the version parameter, or no parameter at all, in which case the behavior is the same as C<gsl_version()>.
 
 =cut
 
@@ -49,7 +65,7 @@ sub require_gsl_version {
   my $required = shift;
   $required ||= 0;
 
-  my $have = Alien::GSL::have_gsl_version();
+  my $have = gsl_version();
 
   if ($required == 0) {
     return $have if $have;
@@ -63,46 +79,6 @@ sub require_gsl_version {
 
 }
 
-=head2 install ( [$version,] [$opts_hashref] );
-
-Delegation function which calls the OS specific install function. Those functions may be called directly but as it is not recommended they are not listed in this document.
-
-May take up to two arguments, a parameter which specifies the desired version to install (i.e. C<1.15> or C<1.1.1>) which must correspond exactly to the version number in the filename of the tarball. The final argument may be hash reference with options. Currently the available options are:
-
-=over
-
-=item *
-
-C<CLEANUP> - if set to a true value the temporary folder create will be removed upon the completion of the script. This is the default.
-
-=back
-
-This function returns zero if the build/install fails and the version number (as returned by C<have_gsl_version()>) if the build/install succeeds.
-
-On *nix systems this function can only be run with root permissions. Other operating systems (if supported) may require elevated permissions as well.
-
-=cut
-
-sub install {
-  # this function can be used to delegate to individual 
-  # OS specific installers once they are created
-  # this should test $^O. Be sure to update @SUPPORTED_OSES too!
-
-  # perhaps setting CBLAS env variable should go here? is that OS indep?
-
-  if ($^O eq 'linux') {
-    goto &install_linux;
-  } else {
-    return 0;
-  }
-}
-
-
-
-=head1 MODULE FUNCTIONS
-
-These functions are basically a functional interface to the C<gsl-config> utility command.
-
 =head2 gsl_prefix
 
 Takes no options, returns the "GSL installation prefix".
@@ -114,6 +90,8 @@ sub gsl_prefix {
   if ($?) {
     warn "Call to gsl-config --prefix failed: $!";
   }
+
+  chomp($prefix);
 
   return $prefix;
 }
@@ -136,12 +114,14 @@ sub gsl_libs {
     $call .= '-without-cblas';
   } 
 
-  my $prefix = qx/ $call /;
+  my $libs = qx/ $call /;
   if ($?) {
     warn "Call to $call failed: $!";
   }
 
-  return $prefix;
+  chomp($libs);
+
+  return $libs;
 }
 
 =head2 gsl_cflags
@@ -156,22 +136,9 @@ sub gsl_cflags {
     warn "Call to gsl-config --cflags failed: $!";
   }
 
+  chomp($cflags);
+
   return $cflags;
-}
-
-=head2 gsl_version
-
-Takes no options, returns "version information". This function is provided for symmetry, however, for flexibility and error handling the C<have_gsl_version()> function is recommended, especially in pre-install usage.
-
-=cut
-
-sub gsl_version {
-  my $version = qx/ gsl-config --version /;
-  if ($?) {
-    warn "Call to gsl-config --version failed: $!";
-  }
-
-  return $version;
 }
 
 =head1 SEE ALSO
