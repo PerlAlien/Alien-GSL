@@ -3,10 +3,13 @@ use warnings;
 
 use lib 'builder';
 
+use Devel::CheckOS 'os_is';
+
 my $builder_class = 'My::Builder';
-if ($^O eq 'linux') { 
+if ( os_is('Unix') ) {
   $builder_class .= '::Unix';
 }
+print "Using build class $build_class\n";
 
 eval "require $builder_class" or die "Could not load $builder_class";
 
@@ -22,6 +25,7 @@ my $builder = $builder_class->new(
     'perl'              => '5.008',
     'Archive::Extract'  => 0,
     'parent'		=> 0,
+    'Devel::CheckOS'	=> 0,
   },
   build_requires => {
     'perl'              => '5.008',
