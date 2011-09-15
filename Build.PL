@@ -5,7 +5,7 @@ use lib 'builder';
 
 my $builder_class = 'My::Builder';
 if ($^O eq 'linux') { 
-  $builder_class .= '::Linux';
+  $builder_class .= '::Unix';
 }
 
 eval "require $builder_class" or die "Could not load $builder_class";

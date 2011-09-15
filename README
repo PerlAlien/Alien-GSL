@@ -1,4 +1,4 @@
-Alien::GSL 0.02
+Alien::GSL 0.03
 ===============
 
 This module is meant to ease the install of the Gnu Scientific Library (GSL). 
@@ -8,9 +8,10 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  File::Chdir
+  Module::Build (in core as of Perl 5.9.4)
+  File::chdir
   LWP::Simple
-  Archive::Extract (in core after Perl 5.9.5)
+  Archive::Extract (in core as of Perl 5.9.5)
 
 This module requires Perl version 5.8.0 but not for any more specific reason than I do not want to test below that version number.
 

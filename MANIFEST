@@ -1,6 +1,6 @@
 Build.PL
 builder/My/Builder.pm
-builder/My/Builder/Linux.pm
+builder/My/Builder/Unix.pm
 Changes
 lib/Alien/GSL.pm
 MANIFEST			This list of files

@@ -1,4 +1,4 @@
-package My::Builder::Linux;
+package My::Builder::Unix;
 
 use lib 'builder';
 use parent 'My::Builder';
