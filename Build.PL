@@ -33,7 +33,8 @@ my $builder = $builder_class->new(
     'Archive::Extract'  => 0,
   },
   get_options => {
-    'Force' => {default => 0},
+    'Force'	=> {default => 0},
+    'Version'	=> {default => 0},
   },
   meta_merge => {
     resources  => {

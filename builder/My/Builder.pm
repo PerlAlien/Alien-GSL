@@ -23,7 +23,12 @@ sub ACTION_code {
   if ($self->args('Force') or !$self->have_gsl_version) {
     my $tmpdir = File::Temp->newdir();
 
-    my $dir = $self->fetch({dir => $tmpdir});
+    my $fetch_args = {dir => $tmpdir};
+    if ($self->args('Version') {
+      $fetch_argts->{version} => $self->args('Version');
+    }
+
+    my $dir = $self->fetch($fetch_args);
 
     if ($self->gsl_make_install($dir) ) {
       print "Build/Install libgsl succeeded\n"; 
