@@ -25,7 +25,7 @@ sub gsl_make_install {
   print "Configuring GSL\n";
   system( './configure' );
   if ($?) {
-    print "Configure Failed!\n";
+    print "Configure (./configure) Failed!\n";
     return 0;
   }
 

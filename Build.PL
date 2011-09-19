@@ -32,6 +32,9 @@ my $builder = $builder_class->new(
     'Test::More'        => 0,
     'Archive::Extract'  => 0,
   },
+  get_options => {
+    'Force' => {default => 0},
+  },
   meta_merge => {
     resources  => {
       Type => "git",

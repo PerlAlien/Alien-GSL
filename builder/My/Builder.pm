@@ -25,8 +25,11 @@ sub ACTION_code {
 
     my $dir = $self->fetch({dir => $tmpdir});
 
-    my $status = $self->gsl_make_install($dir);
-    print "Build/Install succeeded\n"; 
+    if ($self->gsl_make_install($dir) ) {
+      print "Build/Install libgsl succeeded\n"; 
+    } else {
+      print "Build/Install libgsl failed\n";
+    }
   }
   
   $self->SUPER::ACTION_code;
