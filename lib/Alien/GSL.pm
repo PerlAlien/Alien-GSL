@@ -24,6 +24,28 @@ This module is meant to ease the install of the Gnu Scientific Library (GSL). It
    die "This module requires at least GSL 1.15";
  }
 
+=head1 INSTALLATION
+
+L<Alien::GSL> uses the L<Module::Build> system for installation. Therefore the usual build process is
+
+ perl Build.PL
+ ./Build
+ ./Build test
+ ./Build install
+
+It will try (at a minimum) to detect if the GSL library is installed on the local system. If not it will attempt, if possible, to download/build/install it. This build process will likely require the C<Build> script to be run with root privaledges. Future versions of L<Alien::GSL> may try to avoid this problem. This is not necessary if the library is already installed on the system.
+
+=head2 PerlBrew/CPANminus
+
+If using L<perlbrew> to manage local installations of the Perl interpreter, I believe that 
+
+ cpanm --sudo Alien::GSL
+
+will work more correctly than either of
+
+ sudo cpanm Alien::GSL
+ sudo cpan Alien::GSL
+
 =head1 EXPORTS
 
 Currently this module does not export any functions or variables. Use instead the fully qualified symbol name, i.e. C<Alien::GSL::gsl_version()>.
