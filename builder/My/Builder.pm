@@ -25,12 +25,12 @@ sub ACTION_code {
 
     my $fetch_args = {dir => $tmpdir};
     if ($self->args('Version') {
-      $fetch_argts->{version} => $self->args('Version');
+      $fetch_argts->{version} = $self->args('Version');
     }
 
     my $dir = $self->fetch($fetch_args);
 
-    if ($self->gsl_make_install($dir) ) {
+    if ( $self->gsl_make_install($dir) ) {
       print "Build/Install libgsl succeeded\n"; 
     } else {
       print "Build/Install libgsl failed\n";
