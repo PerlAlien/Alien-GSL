@@ -24,8 +24,8 @@ sub ACTION_code {
     my $tmpdir = File::Temp->newdir();
 
     my $fetch_args = {dir => $tmpdir};
-    if ($self->args('Version') {
-      $fetch_argts->{version} = $self->args('Version');
+    if ($self->args('Version')) {
+      $fetch_args->{version} = $self->args('Version');
     }
 
     my $dir = $self->fetch($fetch_args);

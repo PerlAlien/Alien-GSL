@@ -4,6 +4,7 @@ use warnings;
 use lib 'builder';
 
 use Devel::CheckOS 'os_is';
+use UNIVERSAL::require;
 
 my $builder_class = 'My::Builder';
 if ( os_is('Unix') ) {
@@ -11,7 +12,7 @@ if ( os_is('Unix') ) {
 }
 print "Using build class $builder_class\n";
 
-eval "require $builder_class" or die "Could not load $builder_class";
+$builder_class->require() or die "Could not load $builder_class";
 
 my $builder = $builder_class->new(
   module_name        => 'Alien::GSL',
@@ -22,10 +23,10 @@ my $builder = $builder_class->new(
     'perl'              => '5.008',
   },
   configure_requires => {
-    'perl'              => '5.008',
-    'Archive::Extract'  => 0,
-    'parent'		=> 0,
-    'Devel::CheckOS'	=> 0,
+    'perl'               => '5.008',
+    'parent'		 => 0,
+    'Devel::CheckOS'	 => 0,
+    'UNIVERSAL::require' => 0,
   },
   build_requires => {
     'perl'              => '5.008',
