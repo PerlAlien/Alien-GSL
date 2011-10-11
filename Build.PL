@@ -39,10 +39,13 @@ my $builder = $builder_class->new(
   },
   meta_merge => {
     resources  => {
-      Type => "git",
-      Url  => "git://github.com:jberger/Alien-GSL.git",
-      Web  => "http://github.com/jberger/Alien-GSL",
-    }
+      repository => #{
+      #  type => "git",
+      #  url  => "git://github.com:jberger/Alien-GSL.git",
+      #  web  => 
+        "http://github.com/jberger/Alien-GSL",
+      #},
+    },
   },
 );
 
