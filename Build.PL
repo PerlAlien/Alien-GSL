@@ -10,6 +10,9 @@ my $builder_class = 'My::Builder';
 if ( os_is('Unix') ) {
   $builder_class .= '::Unix';
 }
+if ( os_is('MicrosoftWindows') ) {
+  $builder_class .= '::Windows';
+}
 print "Using build class $builder_class\n";
 
 $builder_class->require() or die "Could not load $builder_class";
@@ -24,7 +27,7 @@ my $builder = $builder_class->new(
   },
   configure_requires => {
     'perl'               => '5.008',
-    'parent'		 => 0,
+    'parent'		     => 0,
     'Devel::CheckOS'	 => 0,
     'UNIVERSAL::require' => 0,
   },
@@ -32,10 +35,13 @@ my $builder = $builder_class->new(
     'perl'              => '5.008',
     'Test::More'        => 0,
     'Archive::Extract'  => 0,
+	'File::chdir'       => 0,
+	'LWP::Simple'       => 0,
   },
   get_options => {
-    'Force'	=> {default => 0},
-    'Version'	=> {default => 0},
+    'Dir'     => {default => undef, type => '=s'},
+    'Force'	  => {default => 0},
+    'Version' => {default => 0},
   },
   meta_merge => {
     resources  => {

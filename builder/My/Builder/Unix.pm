@@ -6,6 +6,10 @@ use parent 'My::Builder';
 use Carp;
 
 use File::chdir;
+use Archive::Extract;
+use LWP::Simple;
+
+my $FTP_ROOT = 'ftp://ftp.gnu.org/gnu/gsl/';
 
 sub gsl_make_install {
   my $self = shift;
@@ -45,6 +49,80 @@ sub gsl_make_install {
 
   return 1;
 
+}
+
+=head2 available
+
+Takes no parameters. In list context returns an array of the GSL tarballs available from the FTP folder given in the C<$FTP_ROOT> variable. In scalar context returns only the tarball with the highest version number. 
+
+By default the C<$FTP_ROOT> and this tarball name may be joined to form a full download location. If the user specifies a different C<$FTP_ROOT>, be sure to include a trailing slash.
+
+=cut
+
+sub available {
+  my $self = shift;
+
+  my $index = get( $FTP_ROOT );
+
+  my @tarballs = ($index =~ /(gsl-[\d\.]+\.tar\.gz)(?!\.sig)/g);
+  @tarballs = 
+    map { $_->[0] }
+    sort { 
+      push @$a, 0 while @$a < 4;
+      push @$b, 0 while @$b < 4;
+      $a->[1] <=> $b->[1] ||
+      $a->[2] <=> $b->[2] ||
+      $a->[3] <=> $b->[3]
+    }
+    map { 
+      my $version = $1 if /-([\d\.]+)\./; 
+      [ $_ , split(/\./, $version) ]
+    }
+    @tarballs;
+
+  if (wantarray) {
+    return @tarballs;
+  } else {
+    return $tarballs[-1];
+  }
+
+}
+
+sub fetch {
+  my $self = shift;
+  my $opt = ref $_[0] ? shift : { @_ };
+
+  my $dir = $opt->{dir} || File::Temp->newdir();
+  my $version = $opt->{version} || "";
+
+  my $file;
+  if ($version) {
+    my @available = grep { /gsl-$version\.tar\.gz/ } $self->available();
+    if (@available > 1) {
+      croak "Could not uniquely determine desired version. Files which match your specification (from GSL FTP) are: @available\n";
+    } elsif (@available == 0) {
+      croak "Could not find desired version on the GSL FTP ftp server";
+    } else {
+      $file = $available[0];
+    }
+  } else {
+    $file = $self->available();
+  }  
+
+  local $CWD = "$dir";
+
+  print "Attempting to download: $FTP_ROOT$file\n";
+  getstore( $FTP_ROOT . $file, $file );
+
+  print "Extracting $file\n";
+  my $ae = Archive::Extract->new( archive => $file );
+  $ae->extract;
+
+  (my $extract_dir = $file) =~ s/(gsl-[\d\.]+)\.tar\.gz/$1/;
+
+  local $CWD = $extract_dir;
+
+  return $CWD;
 }
 
 1;
