@@ -27,20 +27,20 @@ my $builder = $builder_class->new(
   },
   configure_requires => {
     'perl'               => '5.008',
-    'parent'		     => 0,
-    'Devel::CheckOS'	 => 0,
+    'parent'             => 0,
+    'Devel::CheckOS'     => 0,
     'UNIVERSAL::require' => 0,
   },
   build_requires => {
     'perl'              => '5.008',
     'Test::More'        => 0,
     'Archive::Extract'  => 0,
-	'File::chdir'       => 0,
-	'LWP::Simple'       => 0,
+    'File::chdir'       => 0,
+    'LWP::Simple'       => 0,
   },
   get_options => {
     'Dir'     => {default => undef, type => '=s'},
-    'Force'	  => {default => 0},
+    'Force'   => {default => 0},
     'Version' => {default => 0},
   },
   meta_merge => {
