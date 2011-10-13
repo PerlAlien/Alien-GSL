@@ -9,8 +9,12 @@ use File::chdir;
 use LWP::Simple;
 use Archive::Extract;
 
-my $FILE_ROOT = 'http://ultrafast.phy.uic.edu/';
-my $FILE      = 'gsl-1-15-win.zip';
+my %available = (
+  '1.15' => {
+    root => 'http://ultrafast.phy.uic.edu/',
+    file => 'gsl-1-15-win.zip',
+  },
+);
 
 sub get_download_dir {
   my $self = shift;
@@ -22,20 +26,28 @@ sub fetch {
   my $opt = ref $_[0] ? shift : { @_ };
 
   my $dir = $opt->{dir};
-  my $version = $opt->{version} || "";
+  my $version = $opt->{version} || '1.15';
+
+  my ($root, $file);
+  if (exists $available{$version}) {
+    $root = $available{$version}{root};
+    $root = $available{$version}{root};
+  } else {
+    croak "Could not find a GSL version $version available"; 
+  }
   
   local $CWD = "$dir";
   
-  print "Attempting to download: $FILE_ROOT$FILE\n";
-  getstore( $FILE_ROOT . $FILE, $FILE );
+  print "Attempting to download: $root$file\n";
+  getstore( $root . $file, $file );
   
-  print "Extracting $FILE\n";
-  my $ae = Archive::Extract->new( archive => $FILE );
+  print "Extracting $file\n";
+  my $ae = Archive::Extract->new( archive => $file );
   $ae->extract;
 
   print "Removing archive\n";
   $ae = undef;
-  unlink($FILE) or carp "Could not remove archive $FILE";
+  unlink($file) or carp "Could not remove archive $file";
   
   return $dir;
 
