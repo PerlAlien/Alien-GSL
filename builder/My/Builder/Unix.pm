@@ -16,20 +16,33 @@ sub gsl_make_install {
   my ($dir) = @_;
 
   local $CWD = $dir if $dir;
-
+  print "Configuring GSL\n";
   # check that this folder contains a configure script
   croak "Folder does not contain AutoConf scripts" unless (-e 'configure');
 
-  # check if running as root
-  if ($< != 0) {
-    print "Installing Alien::GSL requires root permissions\n";
-    return 0;
+  my $configure_command = './configure';
+  if ($self->args('ShareDir') {
+    # for share_dir install get full path to share_dir
+    local $CWD = $self->base_dir();
+    push @CWD, $self->{share_dir};
+    $configure_command .= " --prefix=$CWD";
+
+    $self->config_data( libs => 'share_dir' );
+
+  } else {
+  # for system-wide install check if running as root
+    if ($< != 0) {
+      print "Installing Alien::GSL requires root permissions\n";
+      return 0;
+    }
+
+    $self->config_data( libs => 'system' );
+
   }
 
-  print "Configuring GSL\n";
-  system( './configure' );
+  system( $configure_command );
   if ($?) {
-    print "Configure (./configure) Failed!\n";
+    print "Configure ($configure_command) Failed!\n";
     return 0;
   }
 
@@ -46,8 +59,6 @@ sub gsl_make_install {
     print "Install (make install) Failed!\n";
     return 0;
   }
-
-  $self->config_data( libs => 'system' );
 
   return 1;
 
