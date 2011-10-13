@@ -31,7 +31,8 @@ sub fetch {
   my ($root, $file);
   if (exists $available{$version}) {
     $root = $available{$version}{root};
-    $root = $available{$version}{root};
+    $file = $available{$version}{root};
+    $self->config_data('gsl_version' => $version);
   } else {
     croak "Could not find a GSL version $version available"; 
   }
