@@ -43,6 +43,7 @@ my $builder = $builder_class->new(
     'Force'   => {default => 0},
     'Version' => {default => 0},
   },
+  share_dir   => 'share_dir',
   meta_merge => {
     resources  => {
       repository => #{

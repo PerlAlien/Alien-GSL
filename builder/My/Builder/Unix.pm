@@ -47,6 +47,8 @@ sub gsl_make_install {
     return 0;
   }
 
+  $self->config_data( libs => 'system' );
+
   return 1;
 
 }
@@ -92,7 +94,7 @@ sub fetch {
   my $self = shift;
   my $opt = ref $_[0] ? shift : { @_ };
 
-  my $dir = $opt->{dir} || File::Temp->newdir();
+  my $dir = $opt->{dir};
   my $version = $opt->{version} || "";
 
   my $file;

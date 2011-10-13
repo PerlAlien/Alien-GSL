@@ -13,11 +13,16 @@ use File::Temp ();
 
 my $CMD_GSL_CONFIG = 'gsl-config';
 
+sub get_download_dir {
+  my $self = shift;
+  return File::Temp->newdir();
+}
+
 sub ACTION_code {
   my $self = shift;
 
   if ($self->args('Force') or !$self->have_gsl_version) {
-    my $download_dir = $self->args('Dir') || File::Temp->newdir();
+    my $download_dir = $self->args('Dir') || $self->get_download_dir();
 
     my $fetch_args = {dir => $download_dir};
     if ($self->args('Version')) {
