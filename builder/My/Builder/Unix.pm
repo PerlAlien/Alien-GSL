@@ -27,16 +27,16 @@ sub gsl_make_install {
     push @CWD, $self->{share_dir};
     $configure_command .= " --prefix=$CWD";
 
-    $self->config_data( libs => 'share_dir' );
+    $self->config_data( location => 'share_dir' );
 
   } else {
   # for system-wide install check if running as root
     if ($< != 0) {
-      print "Installing Alien::GSL requires root permissions\n";
+      print "Installing Alien::GSL requires root permissions or --ShareDir flag to use locally\n";
       return 0;
     }
 
-    $self->config_data( libs => 'system' );
+    $self->config_data( location => 'system' );
 
   }
 

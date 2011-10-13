@@ -23,7 +23,8 @@ my $builder = $builder_class->new(
   dist_author        => 'Joel Berger <joel.a.berger@gmail.com>',
   license            => 'perl',
   requires => {
-    'perl'              => '5.008',
+    'perl'           => '5.008',
+    'File::ShareDir' => 0,
   },
   configure_requires => {
     'perl'               => '5.008',

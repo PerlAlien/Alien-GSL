@@ -58,7 +58,7 @@ sub gsl_make_install {
   my $self = shift;
   my ($dir) = @_;
   
-  $self->config_data(libs => 'share_dir');
+  $self->config_data(location => 'share_dir');
   
   return 1;
 
