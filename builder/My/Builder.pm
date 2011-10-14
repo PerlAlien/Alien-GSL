@@ -27,6 +27,10 @@ sub get_download_dir {
 sub ACTION_code {
   my $self = shift;
 
+  if ($self->have_gsl_version) {
+    $self->config_data( location => 'system' );
+  }
+
   if ($self->args('Force') or !$self->have_gsl_version) {
     my $download_dir = $self->args('Dir') || $self->get_download_dir();
 
@@ -47,6 +51,11 @@ sub ACTION_code {
     }
   }
   
+  unless ($self->config_data('location')) {
+    $self->config_data(location => 'unknown');
+    warn "Error unknown location, please fix!";
+  }
+
   $self->SUPER::ACTION_code;
 }
 
