@@ -10,6 +10,7 @@ use parent 'Module::Build';
 use Carp;
 
 use File::Temp ();
+use File::chdir;
 
 my $CMD_GSL_CONFIG = 'gsl-config';
 
@@ -38,12 +39,54 @@ sub ACTION_code {
 
     if ( $self->gsl_make_install($dir) ) {
       print "Build/Install libgsl succeeded\n"; 
+      if ($self->config_data('location') eq 'share_dir') {
+        $self->set_share_dir_data();
+      }
     } else {
       print "Build/Install libgsl failed\n";
     }
   }
   
   $self->SUPER::ACTION_code;
+}
+
+sub set_share_dir_data {
+  my $self = shift;
+
+  local $CWD;
+  push @CWD, qw'share_dir bin';
+  my $base_command = $self->exec_prefix() . 'gsl-config';
+
+  {
+    # emulate gsl-config --libs
+
+    my $command = $base_command . ' --libs';
+    my $libs_str = qx/$command/;
+    if ($?) {
+      carp "Could not execute $command: $!";
+      $libs_str = '';
+    }
+
+    chomp($libs_str);
+    my @libs = grep { ! /^-L/ } split(/ /, $libs_str);
+    $self->config_data( libs => \@libs );
+
+  }
+
+  {
+    # emulate gsl-config --version
+
+    my $command = $base_command . ' --version';
+    my $version = qx/$command/;
+    if ($?) {
+      carp "Could not execute $command: $!";
+      $version = '';
+    }
+
+    chomp($version);
+    $self->config_data(version => $version);
+  }
+  
 }
 
 sub gsl_make_install {
@@ -68,6 +111,10 @@ sub have_gsl_version {
 
   return $gsl_version;
 
+}
+
+sub exec_prefix {
+  return '';
 }
 
 1;

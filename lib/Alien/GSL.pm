@@ -7,6 +7,13 @@ our $VERSION = 0.03;
 $VERSION = eval $VERSION;
 
 use Carp;
+use Alien::GSL::ConfigData;
+use File::ShareDir 'module_dir';
+use File::chdir;
+
+# if $location eq share_dir then the module was built in share_dir mode 
+
+my $share_dir = (Alien::GSL::ConfigData->config('location') eq 'share_dir') ? module_dir('Alien::GSL') : '';
 
 =head1 NAME 
 
@@ -65,12 +72,18 @@ Takes no options, returns the version number of the installed GSL library.
 =cut
 
 sub gsl_version {
-  my $version = qx/ gsl-config --version /;
+  my $version;
 
-  chomp($version);
+  if ($share_dir) {
+    $version = Alien::GSL::ConfigData->config('version');
+  } else {
+    $version = qx/ gsl-config --version /;
+    if ($?) {
+      carp "Call to gsl-config --version failed: $!";
+      $version = '';
+    }
 
-  if ($?) {
-    warn "Call to gsl-config --version failed: $!";
+    chomp($version);
   }
 
   return $version;
@@ -108,12 +121,19 @@ Takes no options, returns the "GSL installation prefix".
 =cut
 
 sub gsl_prefix {
-  my $prefix = qx/ gsl-config --prefix /;
-  if ($?) {
-    warn "Call to gsl-config --prefix failed: $!";
-  }
+  my $prefix;
 
-  chomp($prefix);
+  if ($share_dir) {
+
+  } else {
+    $prefix = qx/ gsl-config --prefix /;
+    if ($?) {
+      carp "Call to gsl-config --prefix failed: $!";
+      $prefix = '';
+    }
+
+    chomp($prefix);
+  }
 
   return $prefix;
 }
@@ -126,22 +146,42 @@ Takes an optional hash or hash reference, returns "library linking information".
 
 sub gsl_libs {
   my %opts = (ref $_[0] eq 'HASH') ? %{ $_[0] } : @_;
+
   my $call = 'gsl-config --libs';
 
   if (! defined $opts{cblas}) {
     $opts{cblas} = 1;
   }
   
-  if ($opts{cblas} == 0) {
+  unless ($opts{cblas}) {
     $call .= '-without-cblas';
   } 
 
-  my $libs = qx/ $call /;
-  if ($?) {
-    warn "Call to $call failed: $!";
-  }
+  my $libs;
+  if ($share_dir) {
 
-  chomp($libs);
+    my @libs = Alien::GSL::ConfigData->config('libs');
+
+    unless ($opts{cblas}) {
+      @libs = grep { ! /cblas/ } @libs;
+    }
+
+    {
+      local $CWD = $share_dir;
+      push @CWD, 'lib';
+      unshift @libs, '-L' . $CWD;
+    }
+
+    $libs = join(' ', @libs);
+  } else {
+
+    $libs = qx/ $call /;
+    if ($?) {
+      carp "Call to $call failed: $!";
+    }
+
+    chomp($libs);
+  }
 
   return $libs;
 }
@@ -153,12 +193,23 @@ Takes no options, returns the "pre-processor and compiler flags".
 =cut
 
 sub gsl_cflags {
-  my $cflags = qx/ gsl-config --cflags /;
-  if ($?) {
-    warn "Call to gsl-config --cflags failed: $!";
-  }
+  my $cflags;
 
-  chomp($cflags);
+  if ($share_dir) {
+    local $CWD = $share_dir;
+    push @CWD, 'include';
+    $cflags = '-I' . $CWD;
+
+  } else {
+
+    my $command = 'gsl-config --cflags';
+    $cflags = qx/$command/;
+    if ($?) {
+      carp "Call to $command failed: $!";
+    }
+
+    chomp($cflags);
+  }
 
   return $cflags;
 }

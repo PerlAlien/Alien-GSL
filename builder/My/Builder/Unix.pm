@@ -138,5 +138,9 @@ sub fetch {
   return $CWD;
 }
 
+sub exec_prefix {
+  return './';
+}
+
 1;
 
