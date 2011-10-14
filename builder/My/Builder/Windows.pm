@@ -6,8 +6,6 @@ use parent 'My::Builder';
 use Carp;
 
 use File::chdir;
-use LWP::Simple;
-use Archive::Extract;
 
 my %available = (
   '1.15' => {
@@ -16,42 +14,18 @@ my %available = (
   },
 );
 
+sub fetch {
+  my $self = shift;
+  return $self->fetch_compiled(@_);
+}
+
+sub available_compiled {
+  return \%available;
+}
+
 sub get_download_dir {
   my $self = shift;
   return 'share_dir';
-}
-
-sub fetch {
-  my $self = shift;
-  my $opt = ref $_[0] ? shift : { @_ };
-
-  my $dir = $opt->{dir};
-  my $version = $opt->{version} || '1.15';
-
-  my ($root, $file);
-  if (exists $available{$version}) {
-    $root = $available{$version}{root};
-    $file = $available{$version}{root};
-    $self->config_data('gsl_version' => $version);
-  } else {
-    croak "Could not find a GSL version $version available"; 
-  }
-  
-  local $CWD = "$dir";
-  
-  print "Attempting to download: $root$file\n";
-  getstore( $root . $file, $file );
-  
-  print "Extracting $file\n";
-  my $ae = Archive::Extract->new( archive => $file );
-  $ae->extract;
-
-  print "Removing archive\n";
-  $ae = undef;
-  unlink($file) or carp "Could not remove archive $file";
-  
-  return $dir;
-
 }
 
 sub gsl_make_install {
