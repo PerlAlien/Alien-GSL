@@ -38,6 +38,7 @@ my $builder = $builder_class->new(
     'Archive::Extract'  => 0,
     'File::chdir'       => 0,
     'LWP::Simple'       => 0,
+	'Capture::Tiny'     => 0,
   },
   get_options => {
     'Dir'      => {type => '=s'},

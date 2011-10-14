@@ -9,12 +9,11 @@ use parent 'Module::Build';
 
 use Carp;
 
-use Data::Dumper;
-
 use File::Temp ();
 use File::chdir;
 use LWP::Simple;
 use Archive::Extract;
+use Capture::Tiny 'capture';
 
 our $FTP_ROOT = 'ftp://ftp.gnu.org/gnu/gsl/';
 our $CMD_GSL_CONFIG = 'gsl-config';
@@ -24,11 +23,16 @@ our $CMD_GSL_CONFIG = 'gsl-config';
 sub have_gsl_version {
 
   no warnings 'exec';
-
-  my $gsl_version = qx/ $CMD_GSL_CONFIG --version /;
+  
+  my $gsl_version;
+  
+  capture {
+    $gsl_version = qx/ $CMD_GSL_CONFIG --version /;
+  };
+  
   if ($?) {
     $gsl_version = 0;
-    carp "Cannot execute $CMD_GSL_CONFIG --version or you do not have GSL installed";
+    warn "Cannot execute '$CMD_GSL_CONFIG --version' or you do not have GSL installed\n";
   }
 
   chomp $gsl_version;
@@ -40,11 +44,12 @@ sub have_gsl_version {
 sub ACTION_code {
   my $self = shift;
 
-  if ($self->have_gsl_version) {
+  my $have_version = $self->have_gsl_version;
+  if ($have_version) {
     $self->config_data( location => 'system' );
   }
 
-  if ($self->args('Force') or !$self->have_gsl_version) {
+  if ($self->args('Force') or !$have_version) {
     my $download_dir = $self->args('Dir') || $self->get_download_dir();
 
     my $fetch_args = {dir => $download_dir};
@@ -175,6 +180,7 @@ sub fetch_source {
     print "Found newest source version: $version\n";
   }  
 
+  $self->config_data( version => $version );
   $file = $available->{$version}{file};
 
   local $CWD = "$dir";
@@ -266,7 +272,7 @@ sub fetch_compiled {
   if (exists $available->{$version}) {
     $root = $available->{$version}{root};
     $file = $available->{$version}{file};
-    $self->config_data('gsl_version' => $version);
+    $self->config_data( version => $version);
   } else {
     croak "Could not find a GSL version $version available"; 
   }
@@ -295,39 +301,26 @@ sub fetch_compiled {
 sub set_share_dir_data {
   my $self = shift;
 
-  local $CWD;
-  push @CWD, qw'share_dir bin';
-  my $base_command = $self->local_exec_prefix() . 'gsl-config';
+  #local $CWD;
+  #push @CWD, qw'share_dir bin';
+  #my $base_command = $self->local_exec_prefix() . 'gsl-config';
 
-  {
+  #{
     # emulate gsl-config --libs
 
-    my $command = $base_command . ' --libs';
-    my $libs_str = qx/$command/;
-    if ($?) {
-      carp "Could not execute $command: $!";
-      $libs_str = '';
-    }
+    #my $command = $base_command . ' --libs';
+    #my $libs_str = qx/$command/;
+    #if ($?) {
+    #  carp "Could not execute $command: $!";
+    #  $libs_str = '';
+    #}
 
-    chomp($libs_str);
-    my @libs = grep { ! /^-L/ } split(/ /, $libs_str);
+    #chomp($libs_str);
+    #my @libs = grep { ! /^-L/ } split(/ /, $libs_str);
+	my @libs = qw( -lgsl -lgslcblas -lm ); # hard code libs rather than determine
     $self->config_data( libs => \@libs );
 
-  }
-
-  {
-    # emulate gsl-config --version
-
-    my $command = $base_command . ' --version';
-    my $version = qx/$command/;
-    if ($?) {
-      carp "Could not execute $command: $!";
-      $version = '';
-    }
-
-    chomp($version);
-    $self->config_data(version => $version);
-  }
+  #}
   
 }
 
