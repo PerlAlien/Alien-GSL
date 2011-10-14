@@ -40,7 +40,8 @@ my $builder = $builder_class->new(
     'LWP::Simple'       => 0,
   },
   get_options => {
-    'Dir'      => {default => undef, type => '=s'},
+    'Dir'      => {type => '=s'},
+    'TempDir'  => {type => '=s'},
     'Force'    => {default => 0},
     'ShareDir' => {default => 0},
     'Version'  => {default => 0},

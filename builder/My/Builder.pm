@@ -15,7 +15,12 @@ my $CMD_GSL_CONFIG = 'gsl-config';
 
 sub get_download_dir {
   my $self = shift;
-  return File::Temp->newdir();
+  my $temp_dir = $self->args('TempDir');
+  if ($temp_dir) {
+    return File::Temp->newdir(DIR => $temp_dir);
+  } else {
+    return File::Temp->newdir();
+  }
 }
 
 sub ACTION_code {
