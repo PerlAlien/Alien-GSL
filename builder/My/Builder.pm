@@ -139,7 +139,7 @@ By default the C<$FTP_ROOT> and this tarball name may be joined to form a full d
 sub available_source {
   my $self = shift;
 
-  my $index = get( $FTP_ROOT );
+  my $index = get( $FTP_ROOT ) or croak "Error retrieving from $FTP_ROOT";
 
   my @tarballs = ($index =~ /(gsl-[\d\.]+\.tar\.gz)(?!\.sig)/g);
   croak "Could not find any tarballs on $FTP_ROOT" unless @tarballs;
