@@ -24,7 +24,7 @@ sub gsl_make_install {
   if ($self->args('ShareDir')) {
     # for share_dir install get full path to share_dir
     local $CWD = $self->base_dir();
-    push @CWD, $self->{share_dir};
+    push @CWD, 'share_dir';
     $configure_command .= " --prefix=$CWD";
 
     $self->config_data( location => 'share_dir' );

@@ -18,7 +18,7 @@ my %available = (
 
 sub get_download_dir {
   my $self = shift;
-  return $self->{share_dir};
+  return 'share_dir';
 }
 
 sub fetch {
