@@ -21,7 +21,7 @@ sub gsl_make_install {
   croak "Folder does not contain AutoConf scripts" unless (-e 'configure');
 
   my $configure_command = './configure';
-  if ($self->args('ShareDir') {
+  if ($self->args('ShareDir')) {
     # for share_dir install get full path to share_dir
     local $CWD = $self->base_dir();
     push @CWD, $self->{share_dir};
