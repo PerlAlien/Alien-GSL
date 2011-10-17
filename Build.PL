@@ -35,10 +35,13 @@ my $builder = $builder_class->new(
   build_requires => {
     'perl'              => '5.008',
     'Test::More'        => 0,
+    'Scalar::Util'      => 0,
     'Archive::Extract'  => 0,
     'File::chdir'       => 0,
-    'LWP::Simple'       => 0,
-	'Capture::Tiny'     => 0,
+    'File::Temp'        => 0,
+    'HTTP::Tiny'        => 0,
+    'Net::FTP'          => 0,
+    'Capture::Tiny'     => 0,
   },
   get_options => {
     'Dir'      => {type => '=s'},
