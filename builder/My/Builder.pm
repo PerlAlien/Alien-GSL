@@ -12,7 +12,7 @@ use Carp;
 use Scalar::Util 'blessed';
 use File::Temp ();
 use File::chdir;
-use LWP::Simple;
+use HTTP::Tiny;
 use Net::FTP;
 use Archive::Extract;
 use Capture::Tiny 'capture';
@@ -162,9 +162,11 @@ sub fetch {
 
   print "Attempting to download: $file\n";
   if (blessed $from and $from->isa('Net::FTP') ) {
-    $from->get( $file );
+    $from->binary();
+    $from->get( $file ) or croak "Download failed: " $from->message();
   } else {
-    getstore( $from . $file, $file );
+    my $response = HTTP::Tiny->new->mirror( $from . $file, $file );
+    croak "Download failed: " . $response->{reason} unless $response->{success};
   }
 
   print "Extracting $file\n";
@@ -196,12 +198,11 @@ sub available_source {
   my $self = shift;
 
   my $ftp = Net::FTP->new($FTP_SERVER, Debug => 0)
-    or die "Cannot connect to some.host.name: $@";
+    or croak "Cannot connect to some.host.name: $@";
 
-  $ftp->login() or die "Cannot login ", $ftp->message;
-  $ftp->binary();
+  $ftp->login() or croak "Cannot login ", $ftp->message;
 
-  $ftp->cwd($FTP_FOLDER) or die "Cannot change working directory ", $ftp->message;
+  $ftp->cwd($FTP_FOLDER) or croak "Cannot change working directory ", $ftp->message;
 
   my @tarballs = grep {/^gsl-[\d\.]+\.tar\.gz$/} $ftp->ls();
   croak "Could not find any tarballs at $FTP_SERVER$FTP_FOLDER" unless @tarballs;
