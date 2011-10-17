@@ -170,8 +170,10 @@ sub fetch {
 
   my $extract_dir = $CWD;
   if ($file =~ /(gsl-[\d\.]+)\.tar\.gz/) {
-    local $CWD = $1 if (-d $1);
-    $extract_dir = $CWD;
+    if (-d $1) {
+      local $CWD = $1;
+      $extract_dir = $CWD;
+    }
   }
 
   return $extract_dir;
