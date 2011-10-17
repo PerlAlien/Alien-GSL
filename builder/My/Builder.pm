@@ -58,21 +58,15 @@ sub have_gsl_version {
 
 sub ACTION_code {
   my $self = shift;
-  my $force = $self->args('Force');
 
   my $have_version = $self->have_gsl_version;
 
-  if ($have_version and !$force) {
+  if ($have_version and ! $self->args('Force')) {
     $self->config_data( location => 'system' );
   } else  {
-    my $download_dir = $self->args('Dir') || $self->get_download_dir();
+    my $download_dir = $self->get_download_dir();
 
-    my $fetch_args = {dir => $download_dir};
-    if ($self->args('Version')) {
-      $fetch_args->{version} = $self->args('Version');
-    }
-
-    my $dir = $self->fetch($fetch_args);
+    my $dir = $self->fetch($download_dir, $self->args('Version'));
 
     if ( $self->gsl_make_install($dir) ) {
       print "Build/Install libgsl succeeded\n"; 
@@ -94,6 +88,11 @@ sub ACTION_code {
 
 sub get_download_dir {
   my $self = shift;
+
+  if ($self->args('Dir')) {
+    return $self->args('Dir');
+  }
+
   my $temp_dir = $self->args('TempDir');
   if ($temp_dir) {
     return File::Temp->newdir(DIR => $temp_dir);
@@ -177,10 +176,7 @@ sub available_source {
 
 sub fetch_source {
   my $self = shift;
-  my $opt = ref $_[0] ? shift : { @_ };
-
-  my $dir = $opt->{dir};
-  my $version = $opt->{version} || 0;
+  my ($dir, $version) = @_;
 
   my $available = $self->available_source();
   my @order_available = $self->order_available($available);
@@ -276,10 +272,9 @@ sub available_compiled {
 
 sub fetch_compiled {
   my $self = shift;
-  my $opt = ref $_[0] ? shift : { @_ };
+  my ($dir, $version) = @_;
 
-  my $dir = $opt->{dir};
-  my $version = $opt->{version} || '1.15';
+  $version ||= '1.15';
 
   my $available = $self->available_compiled();
 
