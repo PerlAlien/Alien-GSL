@@ -43,13 +43,13 @@ sub have_gsl_version {
 
 sub ACTION_code {
   my $self = shift;
+  my $force = $self->args('Force');
 
   my $have_version = $self->have_gsl_version;
-  if ($have_version) {
-    $self->config_data( location => 'system' );
-  }
 
-  if ($self->args('Force') or !$have_version) {
+  if ($have_version and !$force) {
+    $self->config_data( location => 'system' );
+  } else  {
     my $download_dir = $self->args('Dir') || $self->get_download_dir();
 
     my $fetch_args = {dir => $download_dir};
