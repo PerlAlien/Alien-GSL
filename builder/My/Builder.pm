@@ -136,9 +136,45 @@ sub available {
 }
 
 sub fetch {
-  # fetch points to fetch_source unless overridden
   my $self = shift;
-  return $self->fetch_source(@_);
+  my ($dir, $version) = @_;
+
+  my $available = $self->available();
+  my @order_available = $self->order_available($available);
+
+  if ($version) {
+    unless (exists $available->{$version}) {
+      croak "Could not find a GSL version: $version, available are @order_available";
+    }
+  } else {
+    $version = $order_available[-1];
+    print "Found newest version: $version\n";
+  } 
+
+  my $root = $available->{$version}{root};
+  my $file = $available->{$version}{file};
+  $self->config_data( version => $version);
+
+  local $CWD = "$dir";
+
+  print "Attempting to download: $root$file\n";
+  getstore( $root . $file, $file );
+
+  print "Extracting $file\n";
+  my $ae = Archive::Extract->new( archive => $file );
+  $ae->extract;
+
+  print "Removing archive\n";
+  $ae = undef;
+  unlink($file) or carp "Could not remove archive $file";
+
+  my $extract_dir = $CWD;
+  if ($file =~ /(gsl-[\d\.]+)\.tar\.gz/) {
+    local $CWD = $1 if (-d $1);
+    $extract_dir = $CWD;
+  }
+
+  return $extract_dir;
 }
 
 sub local_exec_prefix {
@@ -146,14 +182,6 @@ sub local_exec_prefix {
 }
 
 ## Source Methods ##
-
-=head2 available_source
-
-Takes no parameters. In list context returns an array of the GSL tarballs available from the FTP folder given in the C<$FTP_ROOT> variable. In scalar context returns only the tarball with the highest version number. 
-
-By default the C<$FTP_ROOT> and this tarball name may be joined to form a full download location. If the user specifies a different C<$FTP_ROOT>, be sure to include a trailing slash.
-
-=cut
 
 sub available_source {
   my $self = shift;
@@ -172,42 +200,6 @@ sub available_source {
 
   return \%available;
 
-}
-
-sub fetch_source {
-  my $self = shift;
-  my ($dir, $version) = @_;
-
-  my $available = $self->available_source();
-  my @order_available = $self->order_available($available);
-
-  my $file;
-  if ($version) {
-    unless (exists $available->{$version}) {
-      croak "Could not find a GSL source for specified version: $version, available are @order_available";
-    }
-  } else {
-    $version = $order_available[-1];
-    print "Found newest source version: $version\n";
-  }  
-
-  $self->config_data( version => $version );
-  $file = $available->{$version}{file};
-
-  local $CWD = "$dir";
-
-  print "Attempting to download: $FTP_ROOT$file\n";
-  getstore( $FTP_ROOT . $file, $file );
-
-  print "Extracting $file\n";
-  my $ae = Archive::Extract->new( archive => $file );
-  $ae->extract;
-
-  (my $extract_dir = $file) =~ s/(gsl-[\d\.]+)\.tar\.gz/$1/;
-
-  local $CWD = $extract_dir;
-
-  return $CWD;
 }
 
 sub gsl_make_install {
@@ -268,40 +260,6 @@ sub gsl_make_install {
 sub available_compiled {
   my $self = shift;
   croak "Pre-compiled GSL libraries are not available for this system";
-}
-
-sub fetch_compiled {
-  my $self = shift;
-  my ($dir, $version) = @_;
-
-  $version ||= '1.15';
-
-  my $available = $self->available_compiled();
-
-  my ($root, $file);
-  if (exists $available->{$version}) {
-    $root = $available->{$version}{root};
-    $file = $available->{$version}{file};
-    $self->config_data( version => $version);
-  } else {
-    croak "Could not find a GSL version $version available"; 
-  }
-  
-  local $CWD = "$dir";
-  
-  print "Attempting to download: $root$file\n";
-  getstore( $root . $file, $file );
-  
-  print "Extracting $file\n";
-  my $ae = Archive::Extract->new( archive => $file );
-  $ae->extract;
-
-  print "Removing archive\n";
-  $ae = undef;
-  unlink($file) or carp "Could not remove archive $file";
-  
-  return $dir;
-
 }
 
 ## System Install Methods ##

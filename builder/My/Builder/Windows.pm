@@ -14,9 +14,9 @@ my %available = (
   },
 );
 
-sub fetch {
+sub available {
   my $self = shift;
-  return $self->fetch_compiled(@_);
+  return $self->available_compiled(@_);
 }
 
 sub available_compiled {
