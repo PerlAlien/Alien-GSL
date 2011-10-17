@@ -20,6 +20,21 @@ our $CMD_GSL_CONFIG = 'gsl-config';
 
 ## Generic Methods ##
 
+sub new {
+  my $class = shift;
+
+  my $self = $class->SUPER::new(@_);
+
+  bless($self, $class);
+
+  # default to a share_dir install
+  # My::Builder::Unix overrides this to make system default
+
+  $self->config_data(location => 'share_dir');
+
+  return $self;
+}
+
 sub have_gsl_version {
 
   no warnings 'exec';
