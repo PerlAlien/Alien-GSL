@@ -163,7 +163,7 @@ sub fetch {
   print "Attempting to download: $file\n";
   if (blessed $from and $from->isa('Net::FTP') ) {
     $from->binary();
-    $from->get( $file ) or croak "Download failed: " $from->message();
+    $from->get( $file ) or croak "Download failed: " . $from->message();
   } else {
     my $response = HTTP::Tiny->new->mirror( $from . $file, $file );
     croak "Download failed: " . $response->{reason} unless $response->{success};
