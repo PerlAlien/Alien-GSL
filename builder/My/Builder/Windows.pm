@@ -9,7 +9,7 @@ use File::chdir;
 
 my %available = (
   '1.15' => {
-    root => 'http://ultrafast.phy.uic.edu/',
+    from => 'http://ultrafast.phy.uic.edu/',
     file => 'gsl-1-15-win.zip',
   },
 );

@@ -9,13 +9,16 @@ use parent 'Module::Build';
 
 use Carp;
 
+use Scalar::Util 'blessed';
 use File::Temp ();
 use File::chdir;
 use LWP::Simple;
+use Net::FTP;
 use Archive::Extract;
 use Capture::Tiny 'capture';
 
-our $FTP_ROOT = 'ftp://ftp.gnu.org/gnu/gsl/';
+our $FTP_SERVER = 'ftp.gnu.org';
+our $FTP_FOLDER = '/gnu/gsl';
 our $CMD_GSL_CONFIG = 'gsl-config';
 
 ## Generic Methods ##
@@ -151,14 +154,18 @@ sub fetch {
     print "Found newest version: $version\n";
   } 
 
-  my $root = $available->{$version}{root};
+  my $from = $available->{$version}{from};
   my $file = $available->{$version}{file};
   $self->config_data( version => $version);
 
   local $CWD = "$dir";
 
-  print "Attempting to download: $root$file\n";
-  getstore( $root . $file, $file );
+  print "Attempting to download: $file\n";
+  if (blessed $from and $from->isa('Net::FTP') ) {
+    $from->get( $file );
+  } else {
+    getstore( $from . $file, $file );
+  }
 
   print "Extracting $file\n";
   my $ae = Archive::Extract->new( archive => $file );
@@ -188,15 +195,20 @@ sub local_exec_prefix {
 sub available_source {
   my $self = shift;
 
-  my $index = get( $FTP_ROOT ) or croak "Error retrieving from $FTP_ROOT";
+  my $ftp = Net::FTP->new($FTP_SERVER, Debug => 0)
+    or die "Cannot connect to some.host.name: $@";
 
-  my @tarballs = ($index =~ /(gsl-[\d\.]+\.tar\.gz)(?!\.sig)/g);
-  croak "Could not find any tarballs on $FTP_ROOT" unless @tarballs;
+  $ftp->login() or die "Cannot login ", $ftp->message;
+
+  $ftp->cwd($FTP_FOLDER) or die "Cannot change working directory ", $ftp->message;
+
+  my @tarballs = grep {/^gsl-[\d\.]+\.tar\.gz$/} $ftp->ls();
+  croak "Could not find any tarballs at $FTP_SERVER$FTP_FOLDER" unless @tarballs;
 
   my %available = 
     map { 
       my $version = $1 if /gsl-([\d\.]+)\.tar\.gz/; 
-      ($version => {root => $FTP_ROOT, file => $_ }) 
+      ($version => {from => $ftp, file => $_ }) 
     }
     @tarballs;
 
