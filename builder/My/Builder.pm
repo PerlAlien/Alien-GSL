@@ -199,6 +199,7 @@ sub available_source {
     or die "Cannot connect to some.host.name: $@";
 
   $ftp->login() or die "Cannot login ", $ftp->message;
+  $ftp->binary();
 
   $ftp->cwd($FTP_FOLDER) or die "Cannot change working directory ", $ftp->message;
 
