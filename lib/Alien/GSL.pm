@@ -3,7 +3,7 @@ package Alien::GSL;
 use strict;
 use warnings;
 
-our $VERSION = 0.03;
+our $VERSION = 0.030_001;
 $VERSION = eval $VERSION;
 
 use Carp;
@@ -42,18 +42,35 @@ L<Alien::GSL> uses the L<Module::Build> system for installation. Therefore the u
 
 It will try (at a minimum) to detect if the GSL library is installed on the local system. If not it will attempt, if possible, to download/build/install it. This build process will likely require the C<Build> script to be run with root privaledges. Future versions of L<Alien::GSL> may try to avoid this problem. This is not necessary if the library is already installed on the system.
 
-=head2 PerlBrew/CPANminus
+=head2 Build Flags
 
-If using L<perlbrew> to manage local installations of the Perl interpreter, I believe that 
+When running C<./Build>, certain command line flags may be passed, i.e. C<./Build --ShareDir>.
 
- cpanm --sudo Alien::GSL
+=over
 
-will work more correctly than either of
+=item C<--Version 1.15>
 
- sudo cpanm Alien::GSL
- sudo cpan Alien::GSL
+Specify a version of the GSL library to be installed (here C<1.15>). Without this flag, the highest (read: newest) version available will be used. If a supplied version cannot be found, the install will croak.
 
-=head1 EXPORTS
+=item C<--ShareDir>
+
+When this flag is given, C<File::ShareDir> will be used, even if a system install was possible (i.e. on Linux as root).
+
+=item C<--Force>
+
+When this flad is given, action will be taken, even if a system install of GSL is found. Note that this flag is not needed if C<--ShareDir> is used.
+
+=item C<--Dir dir>
+
+Specify a directory (here C<dir>) to download and build the library. This directory will not be removed later.
+
+=item C<--TempDir /dev/shm>
+
+Specify a location for the temporary (here C</dev/shm/>, the ramdisk on Ubuntu Linux).
+
+=back
+
+=head1 NO EXPORTS
 
 Currently this module does not export any functions or variables. Use instead the fully qualified symbol name, i.e. C<Alien::GSL::gsl_version()>.
 
@@ -65,7 +82,7 @@ This module is in an alpha state. The author hopes that major functionality will
 
 These functions are basically a functional interface to the C<gsl-config> utility command.
 
-=head2 gsl_version
+=head2 C<gsl_version>
 
 Takes no options, returns the version number of the installed GSL library.
 
@@ -89,7 +106,7 @@ sub gsl_version {
   return $version;
 }
 
-=head2 require_gsl_version( [$version] );
+=head2 C<require_gsl_version( [$version] )>
 
 A wrapper around C<gsl_version()> which (optionally) takes a number specifying a minimum GSL version, returns the GSL version if it is greater than or equal to that specified. Returns zero otherwise. May also be called with zero as the version parameter, or no parameter at all, in which case the behavior is the same as C<gsl_version()>.
 
@@ -114,7 +131,7 @@ sub require_gsl_version {
 
 }
 
-=head2 gsl_prefix
+=head2 C<gsl_prefix>
 
 Takes no options, returns the "GSL installation prefix".
 
@@ -138,7 +155,7 @@ sub gsl_prefix {
   return $prefix;
 }
 
-=head2 gsl_libs( [opts hash or hash reference] )
+=head2 C<gsl_libs( [opts hash or hash reference] )>
 
 Takes an optional hash or hash reference, returns "library linking information". A hash key C<cblas>, whose value is false will return the "library linking information, without cblas", though by default the cblas information is included.
 
@@ -186,7 +203,7 @@ sub gsl_libs {
   return $libs;
 }
 
-=head2 gsl_cflags
+=head2 C<gsl_cflags>
 
 Takes no options, returns the "pre-processor and compiler flags".
 
@@ -213,6 +230,24 @@ sub gsl_cflags {
 
   return $cflags;
 }
+
+=head1 TODO
+
+=over
+
+=item *
+
+Implement C<--GSLCheck> flag to run C<make check> during build.
+
+=item *
+
+Improve tests for C<Alien::GSL>
+
+=item *
+
+Are tests possible for C<Module::Build> subclasses?
+
+=back
 
 =head1 SEE ALSO
 

@@ -2,6 +2,9 @@ Revision history for Perl extension Alien::GSL.
 
 0.03 
 	- uses Module::Build
+	- has platform specific instruction
+		- download and compile when possible
+		- download precompiled library on MSWindows
 
 0.02  Mon Aug 1
 	- version incremented as upload to PAUSE wasn't complete
