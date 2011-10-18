@@ -49,7 +49,7 @@ my $builder = $builder_class->new(
     'Force'    => {default => 0},
     'ShareDir' => {default => 0},
     'Version'  => {type => '=s', default => 0},
-    #'GSLCheck' => {default => 0},
+    'GSLCheck' => {default => 0},
   },
   share_dir   => 'share_dir',
   meta_merge => {

@@ -266,6 +266,15 @@ sub gsl_make_install {
     return 0;
   }
 
+  if ( $self->args('GSLCheck') ) {
+    print "Checking GSL compile using 'make check'\n";
+    system( 'make check' );
+    if ($?) {
+      print "GSL check (make check) Failed!\n";
+      return 0;
+    }
+  }
+
   return 1;
 
 }
