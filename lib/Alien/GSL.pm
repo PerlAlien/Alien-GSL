@@ -241,7 +241,11 @@ Implement C<--GSLCheck> flag to run C<make check> during build.
 
 =item *
 
-Improve tests for C<Alien::GSL>
+Clean the C<share_dir> directory when C<ACTION_clean> is run.
+
+=item *
+
+Improve tests for C<Alien::GSL>.
 
 =item *
 
