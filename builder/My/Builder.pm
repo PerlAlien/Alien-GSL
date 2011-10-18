@@ -228,7 +228,11 @@ sub gsl_make_install {
   croak "Folder does not contain AutoConf scripts" unless (-e 'configure');
 
   my $configure_command = $self->local_exec_prefix() . 'configure';
-  if ($self->args('ShareDir')) {
+  my $is_root = ($< != 0);
+
+  if ($self->args('ShareDir') or ! $is_root) {
+    print "Using install method: ShareDir\n";
+
     # for share_dir install get full path to share_dir
     local $CWD = $self->base_dir();
     push @CWD, 'share_dir';
@@ -237,11 +241,6 @@ sub gsl_make_install {
     $self->config_data( location => 'share_dir' );
 
   } else {
-  # for system-wide install check if running as root
-    if ($< != 0) {
-      print "Installing Alien::GSL requires root permissions or --ShareDir flag to use locally\n";
-      return 0;
-    }
 
     $self->config_data( location => 'system' );
 
