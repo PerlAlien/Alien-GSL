@@ -8,3 +8,5 @@ MANIFEST			This list of files
 README
 share_dir/README
 t/basic.t
+META.yml
+META.json
