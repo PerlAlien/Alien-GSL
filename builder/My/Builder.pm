@@ -189,7 +189,7 @@ sub fetch {
 }
 
 sub local_exec_prefix {
-  return '';
+  return './';
 }
 
 ## Source Methods ##

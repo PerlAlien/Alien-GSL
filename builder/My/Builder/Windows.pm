@@ -38,6 +38,10 @@ sub gsl_make_install {
 
 }
 
+sub local_exec_prefix {
+  return '';
+}
+
 
 1;
 

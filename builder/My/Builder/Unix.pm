@@ -22,9 +22,5 @@ sub new {
   return $self;
 }
 
-sub local_exec_prefix {
-  return './';
-}
-
 1;
 
