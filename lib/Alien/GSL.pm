@@ -124,7 +124,7 @@ sub gsl_prefix {
   my $prefix;
 
   if ($share_dir) {
-
+    return $share_dir;
   } else {
     $prefix = qx/ gsl-config --prefix /;
     if ($?) {
@@ -147,15 +147,9 @@ Takes an optional hash or hash reference, returns "library linking information".
 sub gsl_libs {
   my %opts = (ref $_[0] eq 'HASH') ? %{ $_[0] } : @_;
 
-  my $call = 'gsl-config --libs';
-
   if (! defined $opts{cblas}) {
     $opts{cblas} = 1;
   }
-  
-  unless ($opts{cblas}) {
-    $call .= '-without-cblas';
-  } 
 
   my $libs;
   if ($share_dir) {
@@ -174,6 +168,12 @@ sub gsl_libs {
 
     $libs = join(' ', @libs);
   } else {
+
+    my $call = 'gsl-config --libs';
+
+    unless ($opts{cblas}) {
+      $call .= '-without-cblas';
+    } 
 
     $libs = qx/ $call /;
     if ($?) {
