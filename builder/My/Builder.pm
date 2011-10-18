@@ -64,7 +64,7 @@ sub ACTION_code {
 
   my $have_version = $self->have_gsl_version;
 
-  if ($have_version and ! $self->args('Force')) {
+  if ( $have_version and ! $self->args('Force') and ! $self->args('ShareDir') ) {
     $self->config_data( location => 'system' );
   } else  {
     my $download_dir = $self->get_download_dir();
