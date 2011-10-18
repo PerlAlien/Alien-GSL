@@ -1,8 +1,10 @@
 Build.PL
 builder/My/Builder.pm
 builder/My/Builder/Unix.pm
+builder/My/Builder/Windows.pm
 Changes
 lib/Alien/GSL.pm
 MANIFEST			This list of files
 README
+share_dir/README
 t/basic.t
