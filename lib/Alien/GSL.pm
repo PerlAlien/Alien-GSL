@@ -8,12 +8,12 @@ $VERSION = eval $VERSION;
 
 use Carp;
 use Alien::GSL::ConfigData;
-use File::ShareDir 'module_dir';
+use File::ShareDir 'dist_dir';
 use File::chdir;
 
 # if $location eq share_dir then the module was built in share_dir mode 
 
-my $share_dir = (Alien::GSL::ConfigData->config('location') eq 'share_dir') ? module_dir('Alien::GSL') : '';
+my $share_dir = (Alien::GSL::ConfigData->config('location') eq 'share_dir') ? dist_dir('Alien-GSL') : '';
 
 =head1 NAME 
 
