@@ -1,4 +1,5 @@
-MANIFEST*
+Build
+MANIFEST
 *META*
 _build/*
 blib/*
