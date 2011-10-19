@@ -3,7 +3,7 @@ package Alien::GSL;
 use strict;
 use warnings;
 
-our $VERSION = 0.03_01;
+our $VERSION = 0.03_02;
 $VERSION = eval $VERSION;
 
 use Carp;
@@ -237,7 +237,11 @@ sub gsl_cflags {
 
 =item *
 
-Implement C<--GSLCheck> flag to run C<make check> during build.
+Find a better download site for the compiled libraries.
+
+=item *
+
+Build 64 bit libraries.
 
 =item *
 
