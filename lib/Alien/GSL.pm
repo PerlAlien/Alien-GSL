@@ -68,6 +68,10 @@ Specify a directory (here C<dir>) to download and build the library. This direct
 
 Specify a location for the temporary (here C</dev/shm/>, the ramdisk on Ubuntu Linux).
 
+=item C<--GSLCheck>
+
+When this flag is given, if GSL is to be built from source, also include C<make check> in the build phase (before C<make install>). Has no effect if GSL is not going to be built from source.
+
 =back
 
 =head1 NO EXPORTS
