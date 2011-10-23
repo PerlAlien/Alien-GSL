@@ -3,7 +3,7 @@ package Alien::GSL;
 use strict;
 use warnings;
 
-our $VERSION = 0.03_01;
+our $VERSION = 0.03_02;
 $VERSION = eval $VERSION;
 
 use Carp;
@@ -67,6 +67,10 @@ Specify a directory (here C<dir>) to download and build the library. This direct
 =item C<--TempDir /dev/shm>
 
 Specify a location for the temporary (here C</dev/shm/>, the ramdisk on Ubuntu Linux).
+
+=item C<--GSLCheck>
+
+When this flag is given, if GSL is to be built from source, also include C<make check> in the build phase (before C<make install>). Has no effect if GSL is not going to be built from source.
 
 =back
 
@@ -237,7 +241,11 @@ sub gsl_cflags {
 
 =item *
 
-Implement C<--GSLCheck> flag to run C<make check> during build.
+Find a better download site for the compiled libraries.
+
+=item *
+
+Build 64 bit libraries.
 
 =item *
 
