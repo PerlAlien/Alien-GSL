@@ -3,7 +3,7 @@ package Alien::GSL;
 use strict;
 use warnings;
 
-our $VERSION = 0.03_02;
+our $VERSION = 0.03_03;
 $VERSION = eval $VERSION;
 
 use Carp;
