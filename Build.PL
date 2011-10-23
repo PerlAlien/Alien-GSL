@@ -11,6 +11,7 @@ BEGIN {
 
   %conf_req = (
     'perl'              => '5.008',
+    'Module::Build'     => '0.38',
     'parent'            => 0,
     'Scalar::Util'      => 0,
     'Archive::Extract'  => 0,
