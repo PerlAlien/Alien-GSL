@@ -74,3 +74,6 @@
 
 # Avoid author needed files
 \bmake_readme.pl
+
+# Avoid bin scripts which are not ready yet
+\bgsl-config\b
