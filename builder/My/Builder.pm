@@ -16,6 +16,7 @@ use HTTP::Tiny;
 use Net::FTP;
 use Archive::Extract;
 use Capture::Tiny 'capture';
+use File::ShareDir 'dist_dir';
 
 our $FTP_SERVER = 'ftp.gnu.org';
 our $FTP_FOLDER = '/gnu/gsl';
@@ -89,6 +90,55 @@ sub ACTION_code {
   }
 
   $self->SUPER::ACTION_code;
+}
+
+sub ACTION_install {
+  my $self = shift;
+
+  $self->SUPER::ACTION_install();
+
+  if ($self->config_data('location') eq 'share_dir') {
+    $self->rewrite_pc_file();
+  }
+}
+
+sub rewrite_pc_file {
+  my $self = shift;
+
+  #replace with path from File::ShareDir;
+  my $path = '/home/joel/Programs/Joel/Alien-GSL/share_dir';
+  local $CWD = $path;
+  push @CWD, qw/lib pkgconfig/;
+
+  open my $fh, '<', 'gsl.pc' or croak "Could not open gsl.pc (read): $!";
+  my @pc = <$fh>;
+  chomp @pc;
+
+  open $fh, '>', 'gsl.pc' or croak "Could not open gsl.pc (write): $!";
+
+  my $sep = ($pc[0] =~ m'\\') ? '\\' : '/';
+
+  foreach (@pc) {
+    if (/^prefix=/) {
+      print $fh "prefix=$path\n";
+    } elsif (/^exec_prefix=/) {
+      print $fh 'exec_prefix=${prefix}' . "\n";
+    } elsif (/^libdir=/) {
+      print $fh 'libdir=${prefix}' . "${sep}lib\n";
+    } elsif (/^includedir=/) {
+      print $fh 'includedir=${prefix}' . "${sep}include\n";
+    } elsif ( s/Libs:\s*// ) {
+      my @libs = grep { ! /^-L/ } split;
+      unshift @libs, '-L${libdir}';
+      print $fh, join(' ', @libs) . "\n";
+    } elsif ( s/Libs:\s*// ) {
+      my @inc = grep { ! /^-I/ } split;
+      unshift @inc, '-I${includedir}';
+      print $fh, join(' ', @inc) . "\n";
+    } else {
+      print $fh "$_\n";
+    }
+  }
 }
 
 sub get_download_dir {
