@@ -65,6 +65,8 @@ sub ACTION_code {
   my $have_version = $self->have_gsl_version;
 
   if ( $have_version and ! $self->args('Force') and ! $self->args('ShareDir') ) {
+    print "Found system-wide installation of GSL. This will be used by Alien::GSL.\n";
+
     $self->config_data( location => 'system' );
   } else  {
     my $download_dir = $self->get_download_dir();
@@ -228,10 +230,10 @@ sub gsl_make_install {
   croak "Folder does not contain AutoConf scripts" unless (-e 'configure');
 
   my $configure_command = $self->local_exec_prefix() . 'configure';
-  my $is_root = ($< != 0);
+  my $is_root = ($< == 0);
 
   if ($self->args('ShareDir') or ! $is_root) {
-    print "Using install method: ShareDir\n";
+    print "Using install method: File::ShareDir\n";
 
     # for share_dir install get full path to share_dir
     local $CWD = $self->base_dir();
@@ -241,6 +243,8 @@ sub gsl_make_install {
     $self->config_data( location => 'share_dir' );
 
   } else {
+
+    print "Using install method: system-wide\n";
 
     $self->config_data( location => 'system' );
 
