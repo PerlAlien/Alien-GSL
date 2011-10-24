@@ -200,7 +200,7 @@ sub available_source {
   my $self = shift;
 
   my $ftp = Net::FTP->new($FTP_SERVER, Debug => 0)
-    or croak "Cannot connect to some.host.name: $@";
+    or croak "Cannot connect to $FTP_SERVER: $@";
 
   $ftp->login() or croak "Cannot login ", $ftp->message;
 
