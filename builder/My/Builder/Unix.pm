@@ -5,22 +5,22 @@ use parent 'My::Builder';
 
 use Carp;
 
-sub new {
-  my $class = shift;
+#sub new {
+#  my $class = shift;
+#
+#  my $self = $class->SUPER::new(@_);
 
-  my $self = $class->SUPER::new(@_);
-
-  bless($self, $class);
+#  bless($self, $class);
 
   # default to a system install
-  if ($self->args('ShareDir')) {
-    $self->config_data(location => 'share_dir');
-  } else {
-    $self->config_data(location => 'system');
-  }
+#  if ($self->args('ShareDir')) {
+#    $self->config_data(location => 'share_dir');
+#  } else {
+#    $self->config_data(location => 'system');
+#  }
 
-  return $self;
-}
+#  return $self;
+#}
 
 1;
 
