@@ -65,7 +65,10 @@ sub ACTION_code {
 
   my $have_version = $self->have_gsl_version;
 
-  if ( $have_version and ! $self->args('Force') and ! $self->args('ShareDir') ) {
+  if ($self->is_share_dir_populated()) {
+    print "Found GSL in share_dir\n";
+
+  } elsif ( $have_version and ! $self->args('Force') and ! $self->args('ShareDir') ) {
     print "Found system-wide installation of GSL. This will be used by Alien::GSL.\n";
 
     $self->config_data( location => 'system' );
@@ -100,6 +103,20 @@ sub ACTION_install {
   if ($self->config_data('location') eq 'share_dir') {
     $self->rewrite_pc_file();
   }
+}
+
+sub is_share_dir_populated {
+  my $self = shift;
+
+  local $CWD = 'share_dir';
+  return 0 unless (-d 'lib');
+
+  push @CWD, 'lib';
+
+  opendir(my $dh, $CWD);
+  my @found = grep { /gsl/ } readdir($dh);
+
+  return !! @found;
 }
 
 sub rewrite_pc_file {
