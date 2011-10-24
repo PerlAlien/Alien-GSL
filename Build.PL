@@ -20,6 +20,7 @@ BEGIN {
     'HTTP::Tiny'        => 0,
     'Net::FTP'          => 0,
     'Capture::Tiny'     => 0,
+    'File::ShareDir'    => 0,
   );
 
   foreach my $module (keys %conf_req) {

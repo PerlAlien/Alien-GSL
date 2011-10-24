@@ -81,6 +81,7 @@ sub ACTION_code {
       print "Build/Install libgsl succeeded\n"; 
       if ($self->config_data('location') eq 'share_dir') {
         $self->set_share_dir_data();
+        $self->add_share_dir_contents_to_cleanup();
       }
     } else {
       print "Build/Install libgsl failed\n";
@@ -102,59 +103,6 @@ sub ACTION_install {
 
   if ($self->config_data('location') eq 'share_dir') {
     $self->rewrite_pc_file();
-  }
-}
-
-sub is_share_dir_populated {
-  my $self = shift;
-
-  local $CWD = 'share_dir';
-  return 0 unless (-d 'lib');
-
-  push @CWD, 'lib';
-
-  opendir(my $dh, $CWD);
-  my @found = grep { /gsl/ } readdir($dh);
-
-  return !! @found;
-}
-
-sub rewrite_pc_file {
-  my $self = shift;
-
-  #replace with path from File::ShareDir;
-  my $path = '/home/joel/Programs/Joel/Alien-GSL/share_dir';
-  local $CWD = $path;
-  push @CWD, qw/lib pkgconfig/;
-
-  open my $fh, '<', 'gsl.pc' or croak "Could not open gsl.pc (read): $!";
-  my @pc = <$fh>;
-  chomp @pc;
-
-  open $fh, '>', 'gsl.pc' or croak "Could not open gsl.pc (write): $!";
-
-  my $sep = ($pc[0] =~ m'\\') ? '\\' : '/';
-
-  foreach (@pc) {
-    if (/^prefix=/) {
-      print $fh "prefix=$path\n";
-    } elsif (/^exec_prefix=/) {
-      print $fh 'exec_prefix=${prefix}' . "\n";
-    } elsif (/^libdir=/) {
-      print $fh 'libdir=${prefix}' . "${sep}lib\n";
-    } elsif (/^includedir=/) {
-      print $fh 'includedir=${prefix}' . "${sep}include\n";
-    } elsif ( s/Libs:\s*// ) {
-      my @libs = grep { ! /^-L/ } split;
-      unshift @libs, '-L${libdir}';
-      print $fh, join(' ', @libs) . "\n";
-    } elsif ( s/Libs:\s*// ) {
-      my @inc = grep { ! /^-I/ } split;
-      unshift @inc, '-I${includedir}';
-      print $fh, join(' ', @inc) . "\n";
-    } else {
-      print $fh "$_\n";
-    }
   }
 }
 
@@ -367,6 +315,63 @@ sub set_share_dir_data {
   my @libs = qw( -lgsl -lgslcblas -lm ); # hard code libs rather than determine
   $self->config_data( libs => \@libs );
 
+}
+
+sub is_share_dir_populated {
+  my $self = shift;
+
+  local $CWD = 'share_dir';
+  return 0 unless (-d 'lib');
+
+  push @CWD, 'lib';
+
+  opendir(my $dh, $CWD);
+  my @found = grep { /gsl/ } readdir($dh);
+
+  return !! @found;
+}
+
+sub rewrite_pc_file {
+  my $self = shift;
+
+  my $path = dist_dir('Alien-GSL');
+  local $CWD = $path;
+  push @CWD, qw/lib pkgconfig/;
+
+  open my $fh, '<', 'gsl.pc' or croak "Could not open gsl.pc (read): $!";
+  my @pc = <$fh>;
+  chomp @pc;
+
+  open $fh, '>', 'gsl.pc' or croak "Could not open gsl.pc (write): $!";
+
+  my $sep = ($pc[0] =~ m'\\') ? '\\' : '/';
+
+  foreach (@pc) {
+    if (/^prefix=/) {
+      print $fh "prefix=$path\n";
+    } elsif (/^exec_prefix=/) {
+      print $fh 'exec_prefix=${prefix}' . "\n";
+    } elsif (/^libdir=/) {
+      print $fh 'libdir=${prefix}' . "${sep}lib\n";
+    } elsif (/^includedir=/) {
+      print $fh 'includedir=${prefix}' . "${sep}include\n";
+    } elsif ( s/Libs:\s*// ) {
+      my @libs = grep { ! /^-L/ } split;
+      unshift @libs, '-L${libdir}';
+      print $fh 'Libs: ' . join(' ', @libs) . "\n";
+    } elsif ( s/Cflags:\s*// ) {
+      my @inc = grep { ! /^-I/ } split;
+      unshift @inc, '-I${includedir}';
+      print $fh 'Cflags: '. join(' ', @inc) . "\n";
+    } else {
+      print $fh "$_\n";
+    }
+  }
+}
+
+sub add_share_dir_contents_to_cleanup {
+  # not yet implemented
+  return 1;
 }
 
 1;
