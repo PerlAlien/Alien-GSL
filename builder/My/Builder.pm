@@ -71,9 +71,9 @@ sub ACTION_code {
   } else  {
     my $download_dir = $self->get_download_dir();
 
-    my $dir = $self->fetch($download_dir, $self->args('Version'));
+    my $extract_dir = $self->fetch($download_dir, $self->args('Version'));
 
-    if ( $self->gsl_make_install($dir) ) {
+    if ( $self->gsl_make_install($extract_dir) ) {
       print "Build/Install libgsl succeeded\n"; 
       if ($self->config_data('location') eq 'share_dir') {
         $self->set_share_dir_data();
