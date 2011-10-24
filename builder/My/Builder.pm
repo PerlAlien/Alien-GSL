@@ -297,27 +297,9 @@ sub available_compiled {
 sub set_share_dir_data {
   my $self = shift;
 
-  #local $CWD;
-  #push @CWD, qw'share_dir bin';
-  #my $base_command = $self->local_exec_prefix() . 'gsl-config';
+  my @libs = qw( -lgsl -lgslcblas -lm ); # hard code libs rather than determine
+  $self->config_data( libs => \@libs );
 
-  #{
-    # emulate gsl-config --libs
-
-    #my $command = $base_command . ' --libs';
-    #my $libs_str = qx/$command/;
-    #if ($?) {
-    #  carp "Could not execute $command: $!";
-    #  $libs_str = '';
-    #}
-
-    #chomp($libs_str);
-    #my @libs = grep { ! /^-L/ } split(/ /, $libs_str);
-    my @libs = qw( -lgsl -lgslcblas -lm ); # hard code libs rather than determine
-    $self->config_data( libs => \@libs );
-
-  #}
-  
 }
 
 1;
