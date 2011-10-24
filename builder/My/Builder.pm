@@ -158,7 +158,7 @@ sub fetch {
 
   my $from = $available->{$version}{from};
   my $file = $available->{$version}{file};
-  $self->config_data( version => $version);
+  $self->config_data( version => $version );
 
   local $CWD = "$dir";
 
@@ -235,12 +235,12 @@ sub gsl_make_install {
   if ($self->args('ShareDir') or ! $is_root) {
     print "Using install method: File::ShareDir\n";
 
+    $self->config_data( location => 'share_dir' );
+
     # for share_dir install get full path to share_dir
     local $CWD = $self->base_dir();
     push @CWD, 'share_dir';
     $configure_command .= " --prefix=$CWD";
-
-    $self->config_data( location => 'share_dir' );
 
   } else {
 
@@ -313,7 +313,7 @@ sub set_share_dir_data {
 
     #chomp($libs_str);
     #my @libs = grep { ! /^-L/ } split(/ /, $libs_str);
-	my @libs = qw( -lgsl -lgslcblas -lm ); # hard code libs rather than determine
+    my @libs = qw( -lgsl -lgslcblas -lm ); # hard code libs rather than determine
     $self->config_data( libs => \@libs );
 
   #}

@@ -23,6 +23,10 @@ sub available_compiled {
   return \%available;
 }
 
+sub have_gsl_version {
+  return 0;
+}
+
 sub get_download_dir {
   my $self = shift;
   return 'share_dir';
