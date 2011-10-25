@@ -176,7 +176,7 @@ sub gsl_libs {
   my $libs;
   if ($share_dir) {
 
-    my @libs = uniq Alien::GSL::ConfigData->config('libs');
+    my @libs = uniq @{Alien::GSL::ConfigData->config('libs')};
 
     unless ($opts{cblas}) {
       @libs = grep { ! /cblas/ } @libs;
@@ -218,7 +218,7 @@ sub gsl_cflags {
   my $cflags;
 
   if ($share_dir) {
-    my @inc = uniq Alien::GSL::ConfigData->config('inc');
+    my @inc = uniq @{Alien::GSL::ConfigData->config('inc')};
 
     local $CWD = $share_dir;
     push @CWD, 'include';
@@ -236,6 +236,33 @@ sub gsl_cflags {
   }
 
   return $cflags;
+}
+
+=head2 C<gsl_pkgconfig_location>
+
+Returns the path the folder containing C<gsl.pc> for use with the C<pkg-config> command. This file should be setup during installation, however, it must make a few guesses while doing so. Better to use the other C<gsl_*> commands provided herein when possible.
+
+=cut
+
+sub gsl_pkgconfig_location {
+  my $pc_file = '';
+
+  if ($share_dir) {
+    local $CWD = $share_dir;
+    push @CWD, qw/lib pkgconfig/;
+    
+    if (-e 'gsl.pc') {
+      $pc_file = $CWD;
+    } else {
+      warn "pkg-config data (gsl.pc) is not where it should be: $CWD";
+    }
+
+  } else {
+    warn "pkg-config data (gsl.pc) is not tracked for system-installed Alien::GSL";
+  }
+
+  return $pc_file;
+
 }
 
 =head1 TODO

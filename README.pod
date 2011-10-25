@@ -89,6 +89,10 @@ Takes an optional hash or hash reference, returns "library linking information".
 
 Takes no options, returns the "pre-processor and compiler flags".
 
+=head2 C<gsl_pkgconfig_location>
+
+Returns the path the folder containing C<gsl.pc> for use with the C<pkg-config> command. This file should be setup during installation, however, it must make a few guesses while doing so. Better to use the other C<gsl_*> commands provided herein when possible.
+
 =head1 TODO
 
 =over 4

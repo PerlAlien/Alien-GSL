@@ -10,17 +10,17 @@ my %conf_req;
 BEGIN {
 
   %conf_req = (
-    'perl'              => '5.008',
-    'Module::Build'     => '0.38',
-    'parent'            => 0,
-    'Scalar::Util'      => 0,
-    'Archive::Extract'  => 0,
-    'File::chdir'       => 0,
-    'File::Temp'        => 0,
-    'HTTP::Tiny'        => 0,
-    'Net::FTP'          => 0,
-    'Capture::Tiny'     => 0,
-    'File::ShareDir'    => 0,
+    'perl'                  => '5.008',
+    'Module::Build'         => '0.38',
+    'parent'                => 0,
+    'Scalar::Util'          => 0,
+    'Archive::Extract'      => 0,
+    'File::chdir'           => 0,
+    'File::Temp'            => 0,
+    'HTTP::Tiny'            => 0,
+    'Net::FTP'              => 0,
+    'Capture::Tiny'         => 0,
+    'File::Spec::Functions' => 0,
   );
 
   foreach my $module (keys %conf_req) {
@@ -57,8 +57,10 @@ my $builder = $builder_class->new(
   dist_author        => 'Joel Berger <joel.a.berger@gmail.com>',
   license            => 'perl',
   requires => {
-    'perl'           => '5.008',
-    'File::ShareDir' => 0,
+    'perl'            => '5.008',
+    'File::ShareDir'  => 0,
+    'File::chdir'     => 0,
+    'List::MoreUtils' => 0,
   },
   configure_requires => \%conf_req,
   build_requires => \%conf_req,

@@ -8,7 +8,6 @@ use lib 'builder';
 use parent 'Module::Build';
 
 use Carp;
-use XXX;
 
 use Scalar::Util 'blessed';
 use File::Temp ();
@@ -105,15 +104,15 @@ sub ACTION_code {
   $self->SUPER::ACTION_code;
 }
 
-sub ACTION_install {
-  my $self = shift;
+#sub ACTION_install {
+#  my $self = shift;
 
-  $self->SUPER::ACTION_install();
+#  $self->SUPER::ACTION_install();
 
-  if ($self->config_data('location') eq 'share_dir') {
-    $self->rewrite_pc_file();
-  }
-}
+#  if ($self->config_data('location') eq 'share_dir') {
+#    $self->rewrite_pc_file();
+#  }
+#}
 
 sub get_download_dir {
   my $self = shift;
@@ -390,8 +389,6 @@ sub parse_rewrite_pc_file {
       print $fh "$_\n";
     }
   }
-
-  YYY %pc_vars;
 
   for (@libs, @inc) {
     if ( /\$\{([^\}]+)\}/ and exists $pc_vars{$1} ) {
