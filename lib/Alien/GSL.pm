@@ -11,10 +11,13 @@ use Alien::GSL::ConfigData;
 use File::ShareDir 'dist_dir';
 use File::chdir;
 use List::MoreUtils 'uniq';
+#use Try::Tiny;
 
-# if $location eq share_dir then the module was built in share_dir mode 
-
-my $share_dir = (Alien::GSL::ConfigData->config('location') eq 'share_dir') ? dist_dir('Alien-GSL') : '';
+# if $location eq share_dir then the module was built in share_dir mode
+our $share_dir = '';
+eval {
+  $share_dir = dist_dir('Alien-GSL') if (Alien::GSL::ConfigData->config('location') eq 'share_dir');
+};
 
 =head1 NAME 
 
