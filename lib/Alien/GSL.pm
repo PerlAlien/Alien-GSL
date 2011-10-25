@@ -273,11 +273,35 @@ sub gsl_pkgconfig_location {
 
 =item *
 
+C<gsl-config> script (replaces executable for C<File::ShareDir> installs)
+
+=over
+
+=item *
+
+Document with POD rather than usage statement (pod2usage?).
+
+=item *
+
+Figure out how to handle script and executable both being in path.
+
+=item *
+
+Figure out how to launch script on Windows using a C<gsl-config.bat>.
+
+=back
+
+=item *
+
 Find a better download site for the compiled libraries.
 
 =item *
 
-Build 64 bit libraries.
+Provide 64 bit libraries.
+
+=item *
+
+Allow build when C<make> exists (i.e. on strawberry).
 
 =item *
 
