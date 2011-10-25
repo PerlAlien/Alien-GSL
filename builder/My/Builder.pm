@@ -378,12 +378,10 @@ sub parse_rewrite_pc_file {
       print $fh "includedir=$inc_path\n";
     } elsif ( s/Libs:\s*// ) {
       @libs = grep {! /^-L$old_path/ } split;
-      unshift @libs, "-L$lib_path";
-      print $fh 'Libs: ' . join(' ', @libs) . "\n";
+      print $fh "Libs: -L$lib_path " . join(' ', @libs) . "\n";
     } elsif ( s/Cflags:\s*// ) {
       @inc = grep { ! /^-I$old_path/ } split;
-      unshift @inc, "-I$inc_path";
-      print $fh 'Cflags: '. join(' ', @inc) . "\n";
+      print $fh "Cflags: -I$inc_path " . join(' ', @inc) . "\n";
     } else {
       if (/=/) {
         my ($key, $val) = split /\s*=\s*/, $_ , 2;

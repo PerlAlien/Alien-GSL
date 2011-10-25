@@ -10,6 +10,7 @@ use Carp;
 use Alien::GSL::ConfigData;
 use File::ShareDir 'dist_dir';
 use File::chdir;
+use List::MoreUtils 'uniq';
 
 # if $location eq share_dir then the module was built in share_dir mode 
 
@@ -175,7 +176,7 @@ sub gsl_libs {
   my $libs;
   if ($share_dir) {
 
-    my @libs = Alien::GSL::ConfigData->config('libs');
+    my @libs = uniq Alien::GSL::ConfigData->config('libs');
 
     unless ($opts{cblas}) {
       @libs = grep { ! /cblas/ } @libs;
@@ -217,9 +218,11 @@ sub gsl_cflags {
   my $cflags;
 
   if ($share_dir) {
+    my @inc = uniq Alien::GSL::ConfigData->config('inc');
+
     local $CWD = $share_dir;
     push @CWD, 'include';
-    $cflags = '-I' . $CWD;
+    $cflags = "-I$CWD " . join(' ', @inc);
 
   } else {
 
