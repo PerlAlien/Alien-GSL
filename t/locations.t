@@ -12,6 +12,17 @@ if (Alien::GSL::ConfigData->config('location') eq 'share_dir') {
   $Alien::GSL::share_dir = 'share_dir';
 }
 
+## gsl_prefix
+ok( -e Alien::GSL::gsl_prefix, "gsl_prefix directory exists");
+
+## gsl_pkgconfig_location
+{
+  ok( -e Alien::GSL::gsl_pkgconfig_location, "gsl_pkgconfig_location directory exists");
+  local $CWD = Alien::GSL::gsl_pkgconfig_location;
+
+  ok( -e 'gsl.pc', "Found gsl.pc" );
+}
+
 ## gsl_libs
 {
 

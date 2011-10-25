@@ -11,7 +11,6 @@ use Alien::GSL::ConfigData;
 use File::ShareDir 'dist_dir';
 use File::chdir;
 use List::MoreUtils 'uniq';
-#use Try::Tiny;
 
 # if $location eq share_dir then the module was built in share_dir mode
 our $share_dir = '';
