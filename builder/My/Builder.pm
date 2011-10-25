@@ -368,6 +368,8 @@ sub parse_rewrite_pc_file {
   foreach (@pc) {
     if (/^prefix=(.*)/) {
       $old_path = $1;
+	  #windows compat
+	  $old_path =~ s'\\'\\\\'g;
       print $fh "prefix=$path\n";
     } elsif (/^exec_prefix=/) {
       print $fh "exec_prefix=$path\n";
