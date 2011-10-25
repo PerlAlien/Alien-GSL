@@ -8,6 +8,7 @@ use lib 'builder';
 use parent 'Module::Build';
 
 use Carp;
+use XXX;
 
 use Scalar::Util 'blessed';
 use File::Temp ();
@@ -16,7 +17,7 @@ use HTTP::Tiny;
 use Net::FTP;
 use Archive::Extract;
 use Capture::Tiny 'capture';
-use File::ShareDir 'dist_dir';
+use File::Spec::Functions 'catdir';
 
 our $FTP_SERVER = 'ftp.gnu.org';
 our $FTP_FOLDER = '/gnu/gsl';
@@ -68,6 +69,14 @@ sub ACTION_code {
   if ($self->is_share_dir_populated()) {
     print "Found GSL in share_dir\n";
 
+    unless ($self->config_data('location')) {
+      $self->config_data('location' => 'share_dir');
+    }
+
+    unless ( $self->config_data('location') eq 'share_dir' and $self->config_data( 'libs' ) ) {
+      $self->parse_rewrite_pc_file();
+    }
+
   } elsif ( $have_version and ! $self->args('Force') and ! $self->args('ShareDir') ) {
     print "Found system-wide installation of GSL. This will be used by Alien::GSL.\n";
 
@@ -80,8 +89,8 @@ sub ACTION_code {
     if ( $self->gsl_make_install($extract_dir) ) {
       print "Build/Install libgsl succeeded\n"; 
       if ($self->config_data('location') eq 'share_dir') {
-        $self->set_share_dir_data();
-        $self->add_share_dir_contents_to_cleanup();
+        #$self->set_share_dir_data();
+        $self->parse_rewrite_pc_file();
       }
     } else {
       print "Build/Install libgsl failed\n";
@@ -309,13 +318,13 @@ sub available_compiled {
 
 ## ShareDir Methods ##
 
-sub set_share_dir_data {
-  my $self = shift;
+#sub set_share_dir_data {
+#  my $self = shift;
 
-  my @libs = qw( -lgsl -lgslcblas -lm ); # hard code libs rather than determine
-  $self->config_data( libs => \@libs );
+#  my @libs = qw( -lgsl -lgslcblas -lm ); # hard code libs rather than determine
+#  $self->config_data( libs => \@libs );
 
-}
+#}
 
 sub is_share_dir_populated {
   my $self = shift;
@@ -331,11 +340,15 @@ sub is_share_dir_populated {
   return !! @found;
 }
 
-sub rewrite_pc_file {
+sub parse_rewrite_pc_file {
   my $self = shift;
 
-  my $path = dist_dir('Alien-GSL');
-  local $CWD = $path;
+  my $path = catdir(
+    $self->install_destination('lib'),
+    qw/auto share dist Alien-GSL/,
+  );
+
+  local $CWD = 'share_dir';
   push @CWD, qw/lib pkgconfig/;
 
   open my $fh, '<', 'gsl.pc' or croak "Could not open gsl.pc (read): $!";
@@ -344,29 +357,53 @@ sub rewrite_pc_file {
 
   open $fh, '>', 'gsl.pc' or croak "Could not open gsl.pc (write): $!";
 
-  my $sep = ($pc[0] =~ m'\\') ? '\\' : '/';
+  my $old_path = '';
+  my $lib_path = catdir( $path, 'lib');
+  my @libs;
+
+  my $inc_path = catdir( $path, 'include');
+  my @inc;
+
+  my %pc_vars;
 
   foreach (@pc) {
-    if (/^prefix=/) {
+    if (/^prefix=(.*)/) {
+      $old_path = $1;
       print $fh "prefix=$path\n";
     } elsif (/^exec_prefix=/) {
-      print $fh 'exec_prefix=${prefix}' . "\n";
+      print $fh "exec_prefix=$path\n";
     } elsif (/^libdir=/) {
-      print $fh 'libdir=${prefix}' . "${sep}lib\n";
+      print $fh "libdir=$lib_path\n";
     } elsif (/^includedir=/) {
-      print $fh 'includedir=${prefix}' . "${sep}include\n";
+      print $fh "includedir=$inc_path\n";
     } elsif ( s/Libs:\s*// ) {
-      my @libs = grep { ! /^-L/ } split;
-      unshift @libs, '-L${libdir}';
+      @libs = grep {! /^-L$old_path/ } split;
+      unshift @libs, "-L$lib_path";
       print $fh 'Libs: ' . join(' ', @libs) . "\n";
     } elsif ( s/Cflags:\s*// ) {
-      my @inc = grep { ! /^-I/ } split;
-      unshift @inc, '-I${includedir}';
+      @inc = grep { ! /^-I$old_path/ } split;
+      unshift @inc, "-I$inc_path";
       print $fh 'Cflags: '. join(' ', @inc) . "\n";
     } else {
+      if (/=/) {
+        my ($key, $val) = split /\s*=\s*/, $_ , 2;
+        $pc_vars{$key} = $val;
+      }
       print $fh "$_\n";
     }
   }
+
+  YYY %pc_vars;
+
+  for (@libs, @inc) {
+    if ( /\$\{([^\}]+)\}/ and exists $pc_vars{$1} ) {
+      my $rep = $pc_vars{$1};
+      s/\$\{$1\}/$rep/;
+    }
+  }
+
+  $self->config_data( libs => \@libs );
+  $self->config_data( inc => \@inc );
 }
 
 sub add_share_dir_contents_to_cleanup {
