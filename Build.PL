@@ -11,14 +11,16 @@ BEGIN {
 
   %conf_req = (
     'perl'                  => '5.008',
-    'Module::Build'         => '0.38',
+    'lib'                   => 0,
     'parent'                => 0,
+    'Module::Build'         => '0.38',
+    'Carp'                  => 0,
     'Scalar::Util'          => 0,
-    'Archive::Extract'      => 0,
-    'File::chdir'           => 0,
     'File::Temp'            => 0,
+    'File::chdir'           => 0,
     'HTTP::Tiny'            => 0,
     'Net::FTP'              => 0,
+    'Archive::Extract'      => 0,
     'Capture::Tiny'         => 0,
     'File::Spec::Functions' => 0,
     'Sort::Versions'        => 0,
@@ -59,6 +61,7 @@ my $builder = $builder_class->new(
   license            => 'perl',
   requires => {
     'perl'            => '5.008',
+    'Carp'            => 0,
     'File::ShareDir'  => 0,
     'File::chdir'     => 0,
     'List::MoreUtils' => 0,
