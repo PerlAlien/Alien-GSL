@@ -43,7 +43,39 @@ L<Alien::GSL> uses the L<Module::Build> system for installation. Therefore the u
  ./Build test
  ./Build install
 
-It will try (at a minimum) to detect if the GSL library is installed on the local system. If not it will attempt, if possible, to download/build/install it. This build process will likely require the C<Build> script to be run with root privaledges. Future versions of L<Alien::GSL> may try to avoid this problem. This is not necessary if the library is already installed on the system.
+N.B. the C<./> is not needed on some platforms, notably Windows.
+
+During its build phase (i.e. C<./Build> or more properly C<./Build build> or most properly C<./Build code>) it will attempt the following, more or less in order (also depends on platform and availability):
+
+=over 
+
+=item *
+
+Use a system installed copy of the GSL libraries, using the information provided by calling C<gsl-config>.
+
+=item *
+
+Download pre-compiled binaries of the GSL library and store using L<File::ShareDir>.
+
+=item *
+
+Download and build GSL libraries from source. This build process does not require the C<Build> script to be run with root privaledges. Then either:
+
+=over
+
+=item *
+
+Install system-wide if possible (only for Linux, when run as root). 
+
+=item *
+
+Store using L<File::ShareDir>.
+
+=back
+
+=back
+
+The above behaviors may be manipulated by passing ...
 
 =head2 Build Flags
 
@@ -69,7 +101,7 @@ Specify a directory (here C<dir>) to download and build the library. This direct
 
 =item C<--TempDir /dev/shm>
 
-Specify a location for the temporary (here C</dev/shm/>, the ramdisk on Ubuntu Linux).
+Specify a location for the temporary build directory (here C</dev/shm/>, the ramdisk on Ubuntu Linux).
 
 =item C<--GSLCheck>
 
