@@ -26,16 +26,22 @@ BEGIN {
     'Sort::Versions'        => 0,
   );
 
-  foreach my $module (keys %conf_req) {
-    next if $module eq 'perl';
+  my @failed = 
+    grep { ! Module::Build->check_installed_version($_, $conf_req{$_}) } 
+    grep { $_ ne 'perl' } 
+    keys %conf_req;
 
-    unless ( Module::Build->check_installed_version($module, $conf_req{$module}) ) {
-      print "You need to install $module, before configuring Alien::GSL\n";
-      if ($ENV{AUTOMATED_TESTING}) {
-        exit 0;
-      } else {
-        die;
-      }
+  if (@failed) {
+    local $" = ' ';
+    my $message = "Some needed modules are missing or must be upgraded before configuring Alien::GSL.\nThose modules are:\t@failed\n";
+    if ($ENV{AUTOMATED_TESTING}) {
+      print $message;
+      exit 0;
+    } else {
+      print $message;
+      exit 1;
+      ## personnally I like die better, but it adds a "BEGIN failed--compilation aborted" message which clutters up the warning the user sees
+      #die $message;
     }
   }
 
