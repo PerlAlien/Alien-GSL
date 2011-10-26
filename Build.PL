@@ -31,6 +31,9 @@ BEGIN {
     grep { $_ ne 'perl' } 
     keys %conf_req;
 
+  ## allows `die` without adding a "BEGIN failed--compilation aborted" message which clutters up the warning the user sees
+  local $SIG{__DIE__} = sub {warn @_; exit 1};
+
   if (@failed) {
     local $" = ' ';
     my $message = "Some needed modules are missing or must be upgraded before configuring Alien::GSL.\nThose modules are:\t@failed\n";
@@ -38,10 +41,7 @@ BEGIN {
       print $message;
       exit 0;
     } else {
-      print $message;
-      exit 1;
-      ## personnally I like die better, but it adds a "BEGIN failed--compilation aborted" message which clutters up the warning the user sees
-      #die $message;
+      die $message;
     }
   }
 
