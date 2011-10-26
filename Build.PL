@@ -21,6 +21,7 @@ BEGIN {
     'Net::FTP'              => 0,
     'Capture::Tiny'         => 0,
     'File::Spec::Functions' => 0,
+    'Sort::Versions'        => 0,
   );
 
   foreach my $module (keys %conf_req) {

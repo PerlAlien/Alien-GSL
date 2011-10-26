@@ -17,27 +17,13 @@ use Net::FTP;
 use Archive::Extract;
 use Capture::Tiny 'capture';
 use File::Spec::Functions 'catdir';
+use Sort::Versions;
 
 our $FTP_SERVER = 'ftp.gnu.org';
 our $FTP_FOLDER = '/gnu/gsl';
 our $CMD_GSL_CONFIG = 'gsl-config';
 
 ## Generic Methods ##
-
-#sub new {
-#  my $class = shift;
-
-#  my $self = $class->SUPER::new(@_);
-
-#  bless($self, $class);
-
-  # default to a share_dir install
-  # My::Builder::Unix overrides this to make system default
-
-  #$self->config_data(location => 'share_dir');
-
-#  return $self;
-#}
 
 sub have_gsl_version {
 
@@ -129,34 +115,6 @@ sub get_download_dir {
   }
 }
 
-#sub gsl_make_install {
-#  my $self = shift;
-#  carp "Build/Install of GSL not available on this system";
-#  return 0;
-#}
-
-sub order_available {
-  my $self = shift;
-  my ($available) = @_;
-  croak "must supply one argument to order_available" unless $available;
-
-  my @order = 
-    map { $_->[0] }
-    sort { 
-      push @$a, 0 while @$a < 4;
-      push @$b, 0 while @$b < 4;
-      $a->[1] <=> $b->[1] ||
-      $a->[2] <=> $b->[2] ||
-      $a->[3] <=> $b->[3]
-    }
-    map {  
-      [ $_, split /\./ ]
-    }
-    keys %$available;
-
-  return @order;
-}
-
 sub available {
   # available points to available_source unless overridden
   my $self = shift;
@@ -168,7 +126,7 @@ sub fetch {
   my ($dir, $version) = @_;
 
   my $available = $self->available();
-  my @order_available = $self->order_available($available);
+  my @order_available = sort versioncmp keys %$available;
 
   if ($version) {
     unless (exists $available->{$version}) {
@@ -316,14 +274,6 @@ sub available_compiled {
 ## System Install Methods ##
 
 ## ShareDir Methods ##
-
-#sub set_share_dir_data {
-#  my $self = shift;
-
-#  my @libs = qw( -lgsl -lgslcblas -lm ); # hard code libs rather than determine
-#  $self->config_data( libs => \@libs );
-
-#}
 
 sub is_share_dir_populated {
   my $self = shift;
