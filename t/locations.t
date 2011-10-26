@@ -16,9 +16,12 @@ if (Alien::GSL::ConfigData->config('location') eq 'share_dir') {
 ok( -e Alien::GSL::gsl_prefix, "gsl_prefix directory exists");
 
 ## gsl_pkgconfig_location
-{
+SKIP: {
+  my $system_install = Alien::GSL::ConfigData->config('location') eq 'system';
+  skip "Don't test gsl_pkgconfig_location for 'system' install type", 2 if $system_install;
+
   ok( -e Alien::GSL::gsl_pkgconfig_location, "gsl_pkgconfig_location directory exists");
-  local $CWD = Alien::GSL::gsl_pkgconfig_location;
+  local $CWD = Alien::GSL::gsl_pkgconfig_location() unless $system_install;
 
   ok( -e 'gsl.pc', "Found gsl.pc" );
 }
