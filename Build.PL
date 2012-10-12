@@ -1,8 +1,6 @@
 use strict;
 use warnings;
 
-use lib '../../lib';
-
 use Alien::Base::ModuleBuild;
 
 my $builder = Alien::Base::ModuleBuild->new(
