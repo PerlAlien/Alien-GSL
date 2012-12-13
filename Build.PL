@@ -16,12 +16,20 @@ my $builder = Alien::Base::ModuleBuild->new(
   },
   dist_author => 'Joel A. Berger <joel.a.berger@gmail.com>',
   alien_name => 'gsl',
-  alien_repository => {
-    protocol => 'ftp',
-    host     => 'ftp.gnu.org',
-    location => '/gnu/gsl',
-    pattern  => qr/^gsl-([\d\.]+)\.tar\.gz$/,
-  },
+  alien_repository => [
+    {
+      protocol => 'ftp',
+      host     => 'ftp.gnu.org',
+      location => '/gnu/gsl',
+      pattern  => qr/^gsl-([\d\.]+)\.tar\.gz$/,
+    },
+    {
+      platform => 'Windows',
+      protocol => 'http',
+      host     => 'ultrafast.phy.uic.edu',
+      location => '/gsl.html',
+      pattern  => qr/^gsl-win32-([\d\.]+)\.zip$/,
+    },
 );
 $builder->create_build_script;
 
