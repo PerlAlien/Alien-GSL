@@ -23,13 +23,7 @@ my $builder = Alien::Base::ModuleBuild->new(
       location => '/gnu/gsl',
       pattern  => qr/^gsl-([\d\.]+)\.tar\.gz$/,
     },
-    {
-      platform => 'Windows',
-      protocol => 'http',
-      host     => 'ultrafast.phy.uic.edu',
-      location => '/gsl.html',
-      pattern  => qr/^gsl-win32-([\d\.]+)\.zip$/,
-    },
+  ],
 );
 $builder->create_build_script;
 
