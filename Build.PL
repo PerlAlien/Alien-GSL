@@ -9,6 +9,7 @@ my $builder = Alien::Base::ModuleBuild->new(
   license => 'perl',
   configure_requires => {
     'Alien::Base' => 0,
+    'Module::Build' => '0.38',
   },
   requires => {
     'perl' => '5.8.1',

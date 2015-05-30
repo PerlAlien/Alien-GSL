@@ -1,6 +1,8 @@
 Build
-MANIFEST*
+MANIFEST
+*\.bak
 *META*
 _build/*
 blib/*
 share_dir/*/*
+Alien-GSL-*\.tar\.gz
