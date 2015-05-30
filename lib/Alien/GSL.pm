@@ -3,7 +3,7 @@ package Alien::GSL;
 use strict;
 use warnings;
 
-our $VERSION = '0.50';
+our $VERSION = '1.00';
 $VERSION = eval $VERSION;
 
 use parent 'Alien::Base';
@@ -22,7 +22,7 @@ Alien::GSL - Easy installation of the GSL library
 
   my $builder = Module::Build->new(
     configure_requires => {
-      'Alien::GSL' => '0.50', # first Alien::Base-based release
+      'Alien::GSL' => '1.00', # first Alien::Base-based release
     },
     ...
     extra_compiler_flags => Alien::GSL->cflags,
@@ -48,11 +48,11 @@ To avoid documentation skew, the author asks the reader to learn about the capab
 
 =head1 COMPATIBILITY
 
-Since version 0.50, L<Alien::GSL> relies on L<Alien::Base>.
+Since version 1.00, L<Alien::GSL> relies on L<Alien::Base>.
 Releases before that version warned about alpha stability and therefore no compatibility has been provided.
 There were no reverse dependencies on CPAN at the time of the change.
 
-From version 0.50, compability is provided by the L<Alien::Base> project itself which is quite concerned about keeping stability.
+From version 1.00, compability is provided by the L<Alien::Base> project itself which is quite concerned about keeping stability.
 Future versions are expected to maintain compatibilty and failure to do so is to be considered a bug.
 Of course this does not apply to the GSL library itself, though the author expects that the GNU project will provide the compatibility guarantees for that library as well.
 
@@ -60,7 +60,7 @@ Of course this does not apply to the GSL library itself, though the author expec
 
 =over
 
-=item * 
+=item *
 
 L<Alien::Base>
 
