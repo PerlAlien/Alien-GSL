@@ -60,13 +60,21 @@ Of course this does not apply to the GSL library itself, though the author expec
 
 =over
 
-=item L<Alien::Base>
+=item * 
 
-=item L<PDL::Modules/"GNU SCIENTIFIC LIBRARY">
+L<Alien::Base>
 
-=item L<PerlGSL>
+=item *
 
-=item L<Math::GSL>
+L<PDL::Modules/"GNU SCIENTIFIC LIBRARY">
+
+=item *
+
+L<PerlGSL>
+
+=item *
+
+L<Math::GSL>
 
 =back
 
