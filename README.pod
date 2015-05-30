@@ -2,164 +2,65 @@
 
 Alien::GSL - Easy installation of the GSL library
 
-=head1 DESCRIPTION
-
-This module is meant to ease the install of the Gnu Scientific Library (GSL). It also provides version checking and build flags via the gsl-config utility.
-
 =head1 SYNOPSIS
 
- use Alien::GSL;
+  # Build.PL
+  use Alien::GSL;
+  use Module::Build 0.28; # need at least 0.28
 
- unless (Alien::GSL::require_gsl_version('1.15')) {
-   die "This module requires at least GSL 1.15";
- }
+  my $builder = Module::Build->new(
+    configure_requires => {
+      'Alien::GSL' => '0.50', # first Alien::Base-based release
+    },
+    ...
+    extra_compiler_flags => Alien::GSL->cflags,
+    extra_linker_flags   => Alien::GSL->libs,
+    ...
+  );
 
-=head1 INSTALLATION
+  $builder->create_build_script;
 
-L<Alien::GSL> uses the L<Module::Build> system for installation. Therefore the usual build process is
 
- perl Build.PL
- ./Build
- ./Build test
- ./Build install
+  # lib/MyLibrary/GSL.pm
+  package MyLibrary::GSL;
 
-It will try (at a minimum) to detect if the GSL library is installed on the local system. If not it will attempt, if possible, to download/build/install it. This build process will likely require the C<Build> script to be run with root privaledges. Future versions of L<Alien::GSL> may try to avoid this problem. This is not necessary if the library is already installed on the system.
+  use Alien::GSL; # dynaload gsl
 
-=head2 Build Flags
+  ...
 
-When running C<./Build>, certain command line flags may be passed, i.e. C<./Build --ShareDir>.
+=head1 DESCRIPTION
 
-=over 4
+Provides the Gnu Scientific Library (GSL) for use by Perl modules, installing it if necessary.
+This module relies heavily on the L<Alien::Base> system to do so.
+To avoid documentation skew, the author asks the reader to learn about the capabilities provided by that module rather than repeating them here.
 
-=item C<--Version 1.15>
+=head1 COMPATIBILITY
 
-Specify a version of the GSL library to be installed (here C<1.15>). Without this flag, the highest (read: newest) version available will be used. If a supplied version cannot be found, the install will croak.
+Since version 0.50, L<Alien::GSL> relies on L<Alien::Base>.
+Releases before that version warned about alpha stability and therefore no compatibility has been provided.
+There were no reverse dependencies on CPAN at the time of the change.
 
-=item C<--ShareDir>
-
-When this flag is given, C<File::ShareDir> will be used, even if a system install was possible (i.e. on Linux as root).
-
-=item C<--Force>
-
-When this flad is given, action will be taken, even if a system install of GSL is found. Note that this flag is not needed if C<--ShareDir> is used.
-
-=item C<--Dir dir>
-
-Specify a directory (here C<dir>) to download and build the library. This directory will not be removed later.
-
-=item C<--TempDir /dev/shm>
-
-Specify a location for the temporary (here C</dev/shm/>, the ramdisk on Ubuntu Linux).
-
-=item C<--GSLCheck>
-
-When this flag is given, if GSL is to be built from source, also include C<make check> in the build phase (before C<make install>). Has no effect if GSL is not going to be built from source.
-
-=back
-
-=head1 NO EXPORTS
-
-Currently this module does not export any functions or variables. Use instead the fully qualified symbol name, i.e. C<Alien::GSL::gsl_version()>.
-
-=head1 INTERFACE STABILITY
-
-This module is in an alpha state. The author hopes that major functionality will remain. The module now uses L<Module::Build> which allows the install functionality (download, build, install) to be platform specific and separated from the usage functionality described in the L<MODULE FUNCTIONS> section.
-
-=head1 MODULE FUNCTIONS
-
-These functions are basically a functional interface to the C<gsl-config> utility command.
-
-=head2 C<gsl_version>
-
-Takes no options, returns the version number of the installed GSL library.
-
-=head2 C<require_gsl_version( [$version] )>
-
-A wrapper around C<gsl_version()> which (optionally) takes a number specifying a minimum GSL version, returns the GSL version if it is greater than or equal to that specified. Returns zero otherwise. May also be called with zero as the version parameter, or no parameter at all, in which case the behavior is the same as C<gsl_version()>.
-
-=head2 C<gsl_prefix>
-
-Takes no options, returns the "GSL installation prefix".
-
-=head2 C<gsl_libs( [opts hash or hash reference] )>
-
-Takes an optional hash or hash reference, returns "library linking information". A hash key C<cblas>, whose value is false will return the "library linking information, without cblas", though by default the cblas information is included.
-
-=head2 C<gsl_cflags>
-
-Takes no options, returns the "pre-processor and compiler flags".
-
-=head2 C<gsl_pkgconfig_location>
-
-Returns the path the folder containing C<gsl.pc> for use with the C<pkg-config> command. This file should be setup during installation, however, it must make a few guesses while doing so. Better to use the other C<gsl_*> commands provided herein when possible.
-
-=head1 TODO
-
-=over 4
-
-=item *
-
-C<gsl-config> script (replaces executable for C<File::ShareDir> installs)
-
-=over 4
-
-=item *
-
-Document with POD rather than usage statement (pod2usage?).
-
-=item *
-
-Figure out how to handle script and executable both being in path.
-
-=item *
-
-Figure out how to launch script on Windows using a C<gsl-config.bat>.
-
-=back
-
-=item *
-
-Find a better download site for the compiled libraries.
-
-=item *
-
-Provide 64 bit libraries.
-
-=item *
-
-Allow build when C<make> exists (i.e. on strawberry).
-
-=item *
-
-Clean the C<share_dir> directory when C<ACTION_clean> is run.
-
-=item *
-
-Improve tests for C<Alien::GSL>.
-
-=item *
-
-Are tests possible for C<Module::Build> subclasses?
-
-=back
+From version 0.50, compability is provided by the L<Alien::Base> project itself which is quite concerned about keeping stability.
+Future versions are expected to maintain compatibilty and failure to do so is to be considered a bug.
+Of course this does not apply to the GSL library itself, though the author expects that the GNU project will provide the compatibility guarantees for that library as well.
 
 =head1 SEE ALSO
 
-=over 4
+=over
+
+=item L<Alien::Base>
+
+=item L<PDL::Modules/"GNU SCIENTIFIC LIBRARY">
+
+=item L<PerlGSL>
 
 =item L<Math::GSL>
-
-=item L<Math::GSLx::ODEIV2>
-
-=item L<GSL|http://www.gnu.org/software/gsl/>
-
-=item L<PDL>, L<website|http://pdl.perl.org>
 
 =back
 
 =head1 SOURCE REPOSITORY
 
-L<http://github.com/jberger/Alien-GSL>
+L<https://github.com/Perl5-Alien/Alien-GSL>
 
 =head1 AUTHOR
 
@@ -167,8 +68,9 @@ Joel Berger, E<lt>joel.a.berger@gmail.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2011 by Joel Berger
+Copyright (C) 2011-2015 by Joel Berger
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
+
 
