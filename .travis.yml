@@ -1,0 +1,16 @@
+language: "perl"
+os: linux
+dist: xenial
+perl:
+  - "5.30"
+
+before_install:
+  - mkdir /home/travis/bin || true
+  - ln -s `which true` /home/travis/bin/cpansign
+  - eval $(curl https://travis-perl.github.io/init) --auto
+
+install:
+  - dzil authordeps | cpanm -n -q || true
+  - dzil listdeps | cpanm -n -q || true
+  - cpanm -n -q --skip-satisfied --installdeps .
+  - export AUTOMATED_TESTING=1 HARNESS_TIMER=1 AUTHOR_TESTING=1 RELEASE_TESTING=0

@@ -1,14 +1,9 @@
 use strict;
 use warnings;
-
 use Alien::GSL;
-
 use Test::More;
+use Test::Alien qw(alien_ok);
 
-my $type = Alien::GSL->install_type;
-note "Install was type <$type>";
-
-ok $type, 'install type sanity/load check';
+alien_ok 'Alien::GSL';
 
 done_testing;
-
