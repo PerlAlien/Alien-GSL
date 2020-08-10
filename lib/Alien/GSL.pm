@@ -80,7 +80,7 @@ L<Math::GSL>
 
 =head1 SOURCE REPOSITORY
 
-L<https://github.com/Perl5-Alien/Alien-GSL>
+L<https://github.com/PerlAlien/Alien-GSL>
 
 =head1 AUTHOR
 
