@@ -28,8 +28,8 @@ my $builder = Alien::Base::ModuleBuild->new(
   ],
   meta_merge => {
     resources => {
-      repository => 'https://github.com/Perl5-Alien/Alien-GSL', 
-      bugtracker => 'https://github.com/Perl5-Alien/Alien-GSL/issues',
+      repository => 'https://github.com/PerlAlien/Alien-GSL',
+      bugtracker => 'https://github.com/PerlAlien/Alien-GSL/issues',
     },
   },
 );
