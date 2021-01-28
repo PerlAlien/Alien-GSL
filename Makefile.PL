@@ -55,15 +55,11 @@ my $abmm = Alien::Build::MM->new;
 %WriteMakefileArgs = $abmm->mm_args(%WriteMakefileArgs);
 # END code inserted by Dist::Zilla::Plugin::AlienBuild
 
-
 unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
   delete $WriteMakefileArgs{TEST_REQUIRES};
   delete $WriteMakefileArgs{BUILD_REQUIRES};
   $WriteMakefileArgs{PREREQ_PM} = \%FallbackPrereqs;
 }
-
-delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
-  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
 
 WriteMakefile(%WriteMakefileArgs);
 

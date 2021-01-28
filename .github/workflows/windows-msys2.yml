@@ -1,0 +1,35 @@
+name: windows-msys2
+on: [push, pull_request]
+jobs:
+  build-dist:
+    runs-on: windows-2019
+    defaults:
+      run:
+        shell: msys2 {0}
+    env:
+      MSYS: winsymlinks:nativestrict
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          release: true
+          msystem: MSYS
+          path-type: minimal
+          install: >-
+            base-devel gcc cmake git libcrypt-devel libreadline tree
+      - uses: actions/checkout@v2
+      - name: perl info
+        run: |
+          echo "PWD=$PWD"
+          echo "HOME=$HOME"
+          echo "USER=$USER"
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          perl --version
+      - name: setup perl locallib
+        run: .github/scripts/setup_perl_locallib.sh
+      - name: install cpanm
+        run: cpan App::cpanminus
+      - name: install dependencies
+        run: .github/scripts/install_dependencies.sh
+      - name: install module
+        run: .github/scripts/install_module.sh
