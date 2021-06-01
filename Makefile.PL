@@ -26,7 +26,7 @@ my %WriteMakefileArgs = (
     "Test2::V0" => 0,
     "Test::Alien" => 0,
   },
-  "VERSION" => "1.01",
+  "VERSION_FROM" => "lib/Alien/GSL.pm",
   "test" => {
     "TESTS" => "t/*.t"
   },
