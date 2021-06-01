@@ -2,6 +2,7 @@ package Alien::GSL;
 
 use strict;
 use warnings;
+use 5.008001;
 
 our $VERSION = '1.02';
 $VERSION = eval $VERSION;
