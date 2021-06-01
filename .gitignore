@@ -1,10 +1,10 @@
-Build
 MANIFEST
 *\.bak
 *META*
-_build/*
 blib/*
 share_dir/*/*
 Alien-GSL-*\.tar\.gz
-/_share
 /_alien
+/pm_to_blib
+/Makefile
+
