@@ -7,7 +7,7 @@ use 5.008001;
 our $VERSION = '1.02';
 $VERSION = eval $VERSION;
 
-use parent 'Alien::Base';
+use base 'Alien::Base';
 
 1;
 

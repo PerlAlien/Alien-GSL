@@ -17,4 +17,4 @@ else
   echo use internet GSL
 fi
 
-cip exec cpanm -n Alien::Base::ModuleBuild
+cip exec cpanm -n Alien::Build Alien::Build::MM
