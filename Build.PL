@@ -9,11 +9,15 @@ my $builder = Alien::Base::ModuleBuild->new(
   license => 'perl',
   configure_requires => {
     'Alien::Base::ModuleBuild' => 0,
-    'Module::Build' => '0.38',
+    'Module::Build'            => '0.38',
+  },
+  test_requires => {
+    'Test2::V0'   => 0,
+    'Test::Alien' => 0,
   },
   requires => {
-    'perl' => '5.8.1',
-    'parent' => 0,
+    'perl'        => '5.8.1',
+    'parent'      => 0,
     'Alien::Base' => 0,
   },
   dist_author => 'Joel A. Berger <joel.a.berger@gmail.com>',
@@ -26,6 +30,7 @@ my $builder = Alien::Base::ModuleBuild->new(
       pattern  => qr/^gsl-([\d\.]+)\.tar\.gz$/,
     },
   ],
+  alien_isolate_dynamic => 1,
   meta_merge => {
     resources => {
       repository => 'https://github.com/PerlAlien/Alien-GSL',
