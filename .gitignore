@@ -6,3 +6,5 @@ _build/*
 blib/*
 share_dir/*/*
 Alien-GSL-*\.tar\.gz
+/_share
+/_alien
