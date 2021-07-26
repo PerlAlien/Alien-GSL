@@ -25,6 +25,7 @@ my %WriteMakefileArgs = (
     "ExtUtils::MakeMaker" => "6.52",
     "Test2::V0" => 0,
     "Test::Alien" => 0,
+    "Test::Alien::Diag" => 0,
   },
   "VERSION_FROM" => "lib/Alien/GSL.pm",
   "test" => {
