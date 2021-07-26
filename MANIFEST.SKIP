@@ -28,6 +28,7 @@
 # Avoid Module::Build generated and utility files.
 \bBuild$
 \b_build/
+\b_alien/
 \bBuild.bat$
 \bBuild.COM$
 \bBUILD.COM$
