@@ -11,7 +11,7 @@ fi
 
 if echo $CIP_ENV | grep -q system; then
   echo use system GSL
-  if echo $CIP_TAG | grep -q fedora; then
+  if echo $CIP_TAG | egrep -q 'fedora|centos'; then
     echo fedora based
     cip sudo dnf -y install gsl-devel
   else
