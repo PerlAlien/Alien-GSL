@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008001;
 
-our $VERSION = '1.05_01';
+our $VERSION = '1.06_01';
 $VERSION =~ tr/_//d;
 
 use base 'Alien::Base';
