@@ -8,6 +8,23 @@ our $VERSION = '1.07';
 
 use base 'Alien::Base';
 
+sub alt
+{
+  my($self, $name) = @_;
+
+  return $self if $self->install_type eq 'system';
+
+  my $new = $self->SUPER::alt($name);
+
+  if($name eq 'gsl-dynamic')
+  {
+    require Role::Tiny;
+    Role::Tiny->apply_roles_to_object($new, 'Alien::Role::Dino');
+  }
+
+  $new;
+}
+
 1;
 
 =head1 NAME

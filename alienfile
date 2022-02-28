@@ -1,6 +1,11 @@
 use alienfile;
+use Path::Tiny qw( path );
 
 plugin 'PkgConfig' => (pkg_name => 'gsl');
+
+configure {
+  requires 'Path::Tiny';
+};
 
 share {
   start_url 'https://ftp.gnu.org/gnu/gsl';
@@ -11,5 +16,20 @@ share {
   );
   plugin Extract => 'tar.gz';
   plugin 'Build::Autoconf';
+
+  build [
+    '%{configure} --enable-shared --enable-static',
+    '%{make}',
+    '%{make} install',
+  ];
+
   plugin 'Gather::IsolateDynamic';
+  plugin 'Gather::Dino';
+
+  after 'gather' => sub {
+    my($build) = @_;
+    my $pc = path("lib/pkgconfig/gsl.pc")->slurp;
+    $pc =~ s/\/lib/\/dynamic/g;
+    path("lib/pkgconfig/gsl-dynamic.pc")->spew($pc);
+  };
 };

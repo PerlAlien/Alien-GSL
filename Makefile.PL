@@ -13,19 +13,27 @@ my %WriteMakefileArgs = (
   "CONFIGURE_REQUIRES" => {
     "Alien::Build" => "2.21",
     "Alien::Build::MM" => "2.21",
-    "ExtUtils::MakeMaker" => "6.52"
+    "ExtUtils::MakeMaker" => "6.52",
+    "Path::Tiny" => 0,
+    "Alien::Build::Plugin::Gather::Dino" => 0,
   },
   "DISTNAME" => "Alien-GSL",
   "LICENSE" => "perl",
   "NAME" => "Alien::GSL",
   "PREREQ_PM" => {
     "Alien::Base" => "2.21",
+    "Role::Tiny" => 0,
+    "Alien::Role::Dino" => 0,
   },
   "TEST_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.52",
     "Test2::V0" => 0,
     "Test::Alien" => 0,
     "Test::Alien::Diag" => 0,
+  },
+  "BUILD_REQUIRES" => {
+    "Path::Tiny" => 0,
+    "Alien::Build::Plugin::Gather::Dino" => 0,
   },
   "VERSION_FROM" => "lib/Alien/GSL.pm",
   "test" => {
